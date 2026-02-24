@@ -2,1926 +2,736 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>DAJZ.CLUB — The Jazz Club</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --charcoal: #1a1a1f;
-    --deep: #0f0f13;
-    --midnight: #141420;
-    --amber: #e8941a;
-    --amber-dim: #c4780f;
-    --amber-glow: rgba(232, 148, 26, 0.15);
-    --cream: #f0e6c8;
-    --cream-dim: #b8a98a;
-    --walnut: #2a1a0a;
-    --walnut-light: #3d2810;
-    --red-vumeter: #e84a1a;
-    --green-vumeter: #4ae870;
-    --felt: #0d1a0d;
-    --glass: rgba(255,255,255,0.03);
-    --static: #888;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--deep);
-    color: var(--cream);
-    font-family: 'Special Elite', cursive;
-    overflow-x: hidden;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    user-select: none;
-  }
-
-  /* Noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  /* ===== HEADER ===== */
-  header {
-    width: 100%;
-    padding: 18px 40px 14px;
-    background: linear-gradient(180deg, var(--walnut) 0%, var(--walnut-light) 60%, transparent 100%);
-    border-bottom: 2px solid #3a2010;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-  }
-
-  header::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
-  }
-
-  .logo {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2.4rem;
-    letter-spacing: 0.12em;
-    color: var(--cream);
-    text-shadow: 0 0 20px var(--amber), 0 0 40px rgba(232,148,26,0.3);
-    line-height: 1;
-  }
-
-  .logo span {
-    color: var(--amber);
-    text-shadow: 0 0 15px var(--amber), 0 0 30px var(--amber);
-  }
-
-  .tagline {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.65rem;
-    color: var(--cream-dim);
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    margin-top: 2px;
-  }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .on-air {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: var(--cream-dim);
-    text-transform: uppercase;
-  }
-
-  .on-air-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--red-vumeter);
-    box-shadow: 0 0 8px var(--red-vumeter), 0 0 16px rgba(232,74,26,0.5);
-    animation: blink 1.4s ease-in-out infinite;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-
-  .clock {
-    font-family: 'Courier Prime', monospace;
-    font-size: 1rem;
-    color: var(--amber);
-    letter-spacing: 0.1em;
-    text-shadow: 0 0 10px var(--amber-dim);
-  }
-
-  /* ===== MAIN LAYOUT ===== */
-  .main-container {
-    display: grid;
-    grid-template-columns: 1fr 380px 340px;
-    gap: 0;
-    width: 100%;
-    max-width: 1400px;
-    flex: 1;
-    padding: 0;
-  }
-
-  /* ===== LEFT PANEL — STATIONS ===== */
-  .stations-panel {
-    background: linear-gradient(180deg, #161616 0%, #111114 100%);
-    border-right: 1px solid #2a1a0a;
-    padding: 20px 0;
-    overflow-y: auto;
-    max-height: calc(100vh - 180px);
-  }
-
-  .stations-panel::-webkit-scrollbar { width: 4px; }
-  .stations-panel::-webkit-scrollbar-track { background: transparent; }
-  .stations-panel::-webkit-scrollbar-thumb { background: var(--walnut-light); border-radius: 2px; }
-
-  .station-group {
-    margin-bottom: 8px;
-  }
-
-  .group-label {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    color: var(--amber);
-    text-transform: uppercase;
-    padding: 10px 20px 6px;
-    border-bottom: 1px solid rgba(232,148,26,0.15);
-    margin-bottom: 4px;
-  }
-
-  .station-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 20px;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    border-left: 2px solid transparent;
-  }
-
-  .station-item:hover {
-    background: rgba(232,148,26,0.06);
-    border-left-color: rgba(232,148,26,0.4);
-  }
-
-  .station-item.active {
-    background: rgba(232,148,26,0.1);
-    border-left-color: var(--amber);
-  }
-
-  .station-icon {
-    font-size: 1rem;
-    width: 24px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-
-  .station-info { flex: 1; min-width: 0; }
-
-  .station-name {
-    font-family: 'Special Elite', cursive;
-    font-size: 0.8rem;
-    color: var(--cream);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .station-item.active .station-name { color: var(--amber); }
-
-  .station-desc {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.58rem;
-    color: var(--cream-dim);
-    opacity: 0.7;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .freq-badge {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.55rem;
-    color: var(--amber-dim);
-    opacity: 0.6;
-    flex-shrink: 0;
-  }
-
-  /* ===== CENTER PANEL — PLAYER ===== */
-  .player-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: linear-gradient(180deg, #1c1c22 0%, #141418 100%);
-    padding: 30px 20px;
-    position: relative;
-    border-right: 1px solid #2a1a0a;
-  }
-
-  /* Vinyl Record */
-  .vinyl-container {
-    position: relative;
-    width: 220px;
-    height: 220px;
-    margin-bottom: 28px;
-  }
-
-  .vinyl-record {
-    width: 220px;
-    height: 220px;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 50% 50%, #222 0%, #222 15%, transparent 15.5%),
-      repeating-radial-gradient(circle at 50% 50%, #1a1a1a 0px, #1a1a1a 1px, #111 2px, #111 3px),
-      conic-gradient(from 0deg, #161616, #222, #161616, #222, #161616);
-    box-shadow:
-      0 0 0 3px #333,
-      0 0 0 4px #1a1a1a,
-      0 4px 30px rgba(0,0,0,0.8),
-      0 0 60px rgba(0,0,0,0.5);
-    animation: spin 4s linear infinite;
-    animation-play-state: paused;
-    position: relative;
-  }
-
-  .vinyl-record.playing { animation-play-state: running; }
-
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  .vinyl-label {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 70px; height: 70px;
-    border-radius: 50%;
-    overflow: hidden;
-    z-index: 2;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-  }
-
-  .vinyl-label img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    filter: sepia(0.25) contrast(1.1) brightness(0.85);
-    animation: counter-spin 4s linear infinite;
-    animation-play-state: paused;
-  }
-
-  .vinyl-record.playing + .vinyl-label img { animation-play-state: running; }
-
-  .vinyl-label:not(:has(img)) {
-    background: radial-gradient(circle, var(--amber-dim) 0%, #8a4a08 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  @keyframes counter-spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(-360deg); }
-  }
-
-  .tonearm {
-    position: absolute;
-    top: 10px;
-    right: -20px;
-    width: 100px;
-    height: 100px;
-    transform-origin: 90% 10%;
-    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
-
-  .tonearm svg { width: 100%; height: 100%; }
-
-  /* Playback info */
-  .now-playing-label {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.58rem;
-    letter-spacing: 0.3em;
-    color: var(--amber);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    opacity: 0.8;
-  }
-
-  .track-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem;
-    font-style: italic;
-    color: var(--cream);
-    text-align: center;
-    line-height: 1.2;
-    margin-bottom: 4px;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
-  }
-
-  .track-artist {
-    font-family: 'Special Elite', cursive;
-    font-size: 0.85rem;
-    color: var(--cream-dim);
-    text-align: center;
-    margin-bottom: 4px;
-  }
-
-  .track-year {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.65rem;
-    color: var(--amber-dim);
-    text-align: center;
-    margin-bottom: 20px;
-    letter-spacing: 0.1em;
-  }
-
-  /* Progress bar (radio — não clicável) */
-  .progress-container {
-    width: 100%;
-    margin-bottom: 16px;
-  }
-
-  .progress-bar {
-    width: 100%;
-    height: 3px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 2px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--amber-dim), var(--amber));
-    border-radius: 2px;
-    box-shadow: 0 0 6px var(--amber);
-    transition: width 1s linear;
-  }
-
-  .time-display {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4px;
-  }
-
-  .time-display span {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.6rem;
-    color: var(--cream-dim);
-    opacity: 0.6;
-  }
-
-  /* VU Meters */
-  .vu-section {
-    display: flex;
-    gap: 16px;
-    align-items: flex-end;
-    margin-bottom: 20px;
-    background: rgba(0,0,0,0.3);
-    padding: 12px 16px;
-    border-radius: 4px;
-    border: 1px solid rgba(255,255,255,0.04);
-    width: 100%;
-    justify-content: center;
-  }
-
-  .vu-meter {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .vu-label {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.5rem;
-    color: var(--cream-dim);
-    letter-spacing: 0.2em;
-    opacity: 0.6;
-    text-transform: uppercase;
-  }
-
-  .vu-bars {
-    display: flex;
-    gap: 2px;
-    align-items: flex-end;
-  }
-
-  .vu-bar {
-    width: 5px;
-    border-radius: 1px;
-    transition: height 0.08s ease;
-  }
-
-  .vu-bar.green { background: var(--green-vumeter); box-shadow: 0 0 4px rgba(74,232,112,0.4); }
-  .vu-bar.amber { background: var(--amber); box-shadow: 0 0 4px rgba(232,148,26,0.4); }
-  .vu-bar.red { background: var(--red-vumeter); box-shadow: 0 0 4px rgba(232,74,26,0.4); }
-
-  .vu-needle-container {
-    width: 80px;
-    height: 40px;
-    position: relative;
-    background: #111;
-    border: 1px solid #333;
-    border-radius: 2px;
-    overflow: hidden;
-    box-shadow: inset 0 1px 4px rgba(0,0,0,0.8);
-  }
-
-  .vu-needle-bg {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 100%;
-    background:
-      radial-gradient(ellipse 100% 200% at 50% 100%, #1a1a0a 0%, #111 70%);
-  }
-
-  .vu-scale {
-    position: absolute;
-    bottom: 4px; left: 4px; right: 4px;
-    height: 30px;
-    border-bottom: 1px solid #444;
-    border-left: 1px solid #444;
-    border-right: 1px solid #444;
-    border-radius: 0 0 4px 4px;
-  }
-
-  .vu-needle {
-    position: absolute;
-    bottom: 4px;
-    left: 50%;
-    width: 1.5px;
-    height: 28px;
-    background: linear-gradient(to top, #888, #ccc);
-    transform-origin: bottom center;
-    transform: rotate(-30deg) translateX(-50%);
-    transition: transform 0.12s ease;
-  }
-
-  .amber-glow-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--amber);
-    box-shadow: 0 0 6px var(--amber), 0 0 12px var(--amber);
-    animation: glow-pulse 2s ease-in-out infinite;
-    align-self: center;
-  }
-
-  @keyframes glow-pulse {
-    0%, 100% { opacity: 0.6; box-shadow: 0 0 4px var(--amber); }
-    50% { opacity: 1; box-shadow: 0 0 10px var(--amber), 0 0 20px rgba(232,148,26,0.4); }
-  }
-
-  /* Crackle control */
-  .crackle-section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-
-  .control-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .control-label {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.6rem;
-    color: var(--cream-dim);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    width: 70px;
-    flex-shrink: 0;
-    opacity: 0.8;
-  }
-
-  input[type=range] {
-    -webkit-appearance: none;
-    flex: 1;
-    height: 3px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #ddd 0%, #888 100%);
-    box-shadow: 0 0 4px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.8);
-    cursor: pointer;
-  }
-
-  input[type=range]::-webkit-slider-runnable-track {
-    background: linear-gradient(to right, var(--amber), transparent);
-    height: 3px;
-    border-radius: 2px;
-  }
-
-  /* Play button area */
-  .play-zone {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 8px;
-  }
-
-  .play-btn {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 40% 35%, #5a4020, #2a1a08);
-    border: 2px solid #5a3a15;
-    box-shadow:
-      0 4px 12px rgba(0,0,0,0.6),
-      0 1px 3px rgba(255,200,100,0.1),
-      inset 0 1px 2px rgba(255,200,100,0.15);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-    font-size: 1.2rem;
-    color: var(--cream);
-  }
-
-  .play-btn:hover {
-    box-shadow:
-      0 6px 18px rgba(0,0,0,0.7),
-      0 0 20px rgba(232,148,26,0.2),
-      inset 0 1px 2px rgba(255,200,100,0.2);
-    transform: translateY(-1px);
-  }
-
-  .play-btn:active { transform: translateY(1px); }
-
-  /* Station name display */
-  .current-station-display {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.62rem;
-    color: var(--amber);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    text-align: center;
-    margin-bottom: 20px;
-    padding: 5px 12px;
-    border: 1px solid rgba(232,148,26,0.2);
-    border-radius: 2px;
-    background: rgba(232,148,26,0.05);
-  }
-
-  /* Tuning transition overlay */
-  .tuning-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(10,10,14,0.9);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 12px;
-    z-index: 50;
-  }
-
-  .tuning-overlay.active { display: flex; }
-
-  .tuning-static {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.7rem;
-    color: var(--amber);
-    letter-spacing: 0.3em;
-    animation: static-flicker 0.1s infinite;
-  }
-
-  @keyframes static-flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-
-  .tuning-wave {
-    display: flex;
-    gap: 3px;
-    align-items: center;
-    height: 30px;
-  }
-
-  .tuning-wave span {
-    width: 3px;
-    background: var(--amber);
-    border-radius: 2px;
-    animation: wave 0.3s ease-in-out infinite alternate;
-    animation-delay: calc(var(--i) * 0.05s);
-  }
-
-  @keyframes wave {
-    from { height: 4px; }
-    to { height: 28px; }
-  }
-
-  /* ===== RIGHT PANEL — LINER NOTES ===== */
-  .liner-panel {
-    background: #0f0f0f;
-    padding: 0;
-    overflow-y: auto;
-    max-height: calc(100vh - 180px);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .liner-panel::-webkit-scrollbar { width: 4px; }
-  .liner-panel::-webkit-scrollbar-thumb { background: var(--walnut-light); border-radius: 2px; }
-
-  .liner-header {
-    background: var(--walnut);
-    padding: 14px 20px;
-    border-bottom: 1px solid #3a2010;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
-
-  .liner-header-title {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    color: var(--amber);
-    text-transform: uppercase;
-  }
-
-  .liner-card {
-    margin: 16px;
-    background: #161610;
-    border: 1px solid rgba(232,148,26,0.12);
-    border-radius: 2px;
-    padding: 16px;
-    position: relative;
-    animation: card-in 0.5s ease;
-  }
-
-  @keyframes card-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .liner-card::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: 16px; right: 16px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
-  }
-
-  /* Tape strip decoration */
-  .tape-strip {
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 16px;
-    background: rgba(232,148,26,0.3);
-    border-radius: 1px;
-    border: 1px solid rgba(232,148,26,0.4);
-  }
-
-  .fact-category {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.55rem;
-    letter-spacing: 0.3em;
-    color: var(--amber);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    opacity: 0.8;
-  }
-
-  .fact-text {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.78rem;
-    color: #d2b48c;
-    line-height: 1.6;
-    font-style: italic;
-  }
-
-  .fact-source {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.58rem;
-    color: var(--cream-dim);
-    opacity: 0.5;
-    margin-top: 8px;
-    text-align: right;
-  }
-
-  /* Divider */
-  .liner-divider {
-    margin: 0 16px;
-    border: none;
-    border-top: 1px solid rgba(255,255,255,0.04);
-  }
-
-  .album-details {
-    margin: 16px;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .album-thumb {
-    width: 64px; height: 64px;
-    border-radius: 2px;
-    object-fit: cover;
-    filter: sepia(0.3) contrast(1.1) brightness(0.85);
-    border: 3px solid #2a2a1a;
-    flex-shrink: 0;
-    background: #222;
-  }
-
-  .album-text { flex: 1; }
-
-  .album-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.85rem;
-    font-style: italic;
-    color: var(--cream);
-    margin-bottom: 4px;
-  }
-
-  .album-meta {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.62rem;
-    color: var(--cream-dim);
-    opacity: 0.7;
-    line-height: 1.5;
-  }
-
-  /* Waveform visualizer */
-  .visualizer-container {
-    width: 100%;
-    margin: 0 0 12px;
-    padding: 0 16px;
-  }
-
-  .visualizer-canvas {
-    width: 100%;
-    height: 50px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 2px;
-  }
-
-  /* Listeners count */
-  .listeners-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0 16px 8px;
-    padding: 8px 12px;
-    background: rgba(232,148,26,0.04);
-    border: 1px solid rgba(232,148,26,0.08);
-    border-radius: 2px;
-  }
-
-  .listeners-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green-vumeter);
-    box-shadow: 0 0 6px rgba(74,232,112,0.6);
-    animation: blink 2s ease infinite;
-  }
-
-  .listeners-text {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.6rem;
-    color: var(--cream-dim);
-    opacity: 0.7;
-  }
-
-  .listeners-count {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.65rem;
-    color: var(--green-vumeter);
-    margin-left: auto;
-  }
-
-  /* ===== DIAL FOOTER ===== */
-  .dial-footer {
-    width: 100%;
-    background: linear-gradient(180deg, var(--walnut-light) 0%, var(--walnut) 100%);
-    border-top: 2px solid #3a2010;
-    padding: 16px 0 12px;
-    position: relative;
-  }
-
-  .dial-footer::before {
-    content: '';
-    position: absolute;
-    top: -1px; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
-  }
-
-  .dial-wrapper {
-    position: relative;
-    overflow: hidden;
-    padding: 0 60px;
-  }
-
-  .dial-track {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    cursor: grab;
-  }
-
-  .dial-track:active { cursor: grabbing; }
-
-  .dial-station {
-    flex-shrink: 0;
-    width: 120px;
-    text-align: center;
-    padding: 6px 8px;
-    position: relative;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-
-  .dial-station::after {
-    content: '|';
-    position: absolute;
-    top: 0; right: 0;
-    color: rgba(255,255,255,0.1);
-    font-size: 0.7rem;
-  }
-
-  .dial-station-name {
-    font-family: 'Special Elite', cursive;
-    font-size: 0.7rem;
-    color: var(--cream-dim);
-    opacity: 0.5;
-    transition: all 0.2s;
-  }
-
-  .dial-station.active .dial-station-name {
-    color: var(--amber);
-    opacity: 1;
-    text-shadow: 0 0 8px rgba(232,148,26,0.5);
-  }
-
-  .dial-freq {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.5rem;
-    color: var(--amber-dim);
-    opacity: 0.4;
-  }
-
-  .dial-station.active .dial-freq { opacity: 0.8; }
-
-  /* Dial needle */
-  .dial-needle {
-    position: absolute;
-    top: 0; bottom: 0;
-    left: 50%;
-    width: 1px;
-    background: var(--amber);
-    box-shadow: 0 0 6px var(--amber), 0 0 12px rgba(232,148,26,0.4);
-    pointer-events: none;
-    z-index: 10;
-    transform: translateX(-50%);
-  }
-
-  .dial-needle::before {
-    content: '▼';
-    position: absolute;
-    top: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: var(--amber);
-    font-size: 0.5rem;
-  }
-
-  /* Fade edges */
-  .dial-wrapper::before, .dial-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 80px;
-    z-index: 5;
-    pointer-events: none;
-  }
-
-  .dial-wrapper::before {
-    left: 0;
-    background: linear-gradient(to right, var(--walnut-light), transparent);
-  }
-
-  .dial-wrapper::after {
-    right: 0;
-    background: linear-gradient(to left, var(--walnut-light), transparent);
-  }
-
-  /* Dial controls */
-  .dial-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 8px 20px 0;
-  }
-
-  .dial-btn {
-    background: radial-gradient(circle at 40% 35%, #3a2a1a, #1a0f05);
-    border: 1px solid #4a3018;
-    color: var(--cream-dim);
-    padding: 4px 12px;
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    cursor: pointer;
-    border-radius: 2px;
-    transition: all 0.15s;
-  }
-
-  .dial-btn:hover {
-    color: var(--amber);
-    border-color: var(--amber-dim);
-    box-shadow: 0 0 8px rgba(232,148,26,0.15);
-  }
-
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 1100px) {
-    .main-container {
-      grid-template-columns: 220px 1fr;
-    }
-    .liner-panel { display: none; }
-  }
-
-  @media (max-width: 700px) {
-    .main-container {
-      grid-template-columns: 1fr;
-    }
-    .stations-panel { display: none; }
-  }
-
-  /* Canvas visualizer */
-  canvas { display: block; }
-
-  /* Typewriter cursor */
-  .typewriter::after {
-    content: '▋';
-    animation: cursor 0.8s step-end infinite;
-    color: var(--amber);
-  }
-
-  @keyframes cursor {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-
-  .station-loading {
-    font-family: 'Courier Prime', monospace;
-    font-size: 0.65rem;
-    color: var(--amber);
-    letter-spacing: 0.2em;
-  }
+:root {
+  --deep:#0b0f14; --charcoal:#151921; --amber:#3ba4e8; --amber-dim:#1e74ad;
+  --amber-faint:rgba(59,164,232,0.12); --cream:#f0ecdf; --cream-dim:#9aa2b0;
+  --walnut:#171a21; --walnut-lt:#222733; --red-vu:#e83b3b; --green-vu:#3be881;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{font-family:'Special Elite',cursive;background:var(--deep);color:var(--cream);overflow-x:hidden;min-height:100%;user-select:none;-webkit-user-select:none}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:0.35}
+#desktop-ui{display:flex;flex-direction:column;align-items:center;min-height:100vh}
+#mobile-ui{display:none;flex-direction:column;height:100dvh;overflow:hidden;position:relative}
+body.mode-mobile #desktop-ui{display:none}
+body.mode-mobile #mobile-ui{display:flex}
+
+/* TOGGLE PILL */
+#ui-toggle{position:fixed;bottom:18px;right:18px;z-index:10000;background:var(--walnut-lt);border:1px solid rgba(59,164,232,0.25);border-radius:20px;padding:5px 10px 5px 8px;display:flex;align-items:center;gap:6px;cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,0.6);transition:all 0.2s}
+#ui-toggle:hover{border-color:var(--amber);box-shadow:0 0 12px rgba(59,164,232,0.25)}
+#ui-toggle-label{font-family:'Courier Prime',monospace;font-size:0.55rem;color:var(--cream-dim);letter-spacing:0.15em;text-transform:uppercase}
+
+/* SHARED ATOMS */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes glow-pulse{0%,100%{opacity:0.6;box-shadow:0 0 4px var(--amber)}50%{opacity:1;box-shadow:0 0 10px var(--amber),0 0 20px rgba(59,164,232,0.4)}}
+@keyframes card-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes static-flicker{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes wave-anim{from{height:4px}to{height:28px}}
+@keyframes cursor-blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes glow-breathe{0%,100%{transform:scale(1);opacity:0.6}50%{transform:scale(1.15);opacity:1}}
+
+.vinyl-record,.m-vinyl{
+  border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,#222 0%,#222 15%,transparent 15.5%),repeating-radial-gradient(circle at 50% 50%,#1a1a1a 0px,#1a1a1a 1px,#111 2px,#111 3px),conic-gradient(from 0deg,#161616,#222,#161616,#222,#161616);
+  box-shadow:0 0 0 3px #333,0 0 0 4px #1a1a1a,0 4px 30px rgba(0,0,0,0.8);
+  animation:spin 4s linear infinite;animation-play-state:paused
+}
+.vinyl-record.playing,.m-vinyl.playing{animation-play-state:running}
+.vinyl-label-inner{width:100%;height:100%;background:radial-gradient(circle,var(--amber-dim) 0%,#0a2840 100%);display:flex;align-items:center;justify-content:center;flex-direction:column}
+.vl-name{font-family:'Bebas Neue',cursive;font-size:0.5rem;color:var(--cream);letter-spacing:0.1em}
+.vl-line{width:20px;height:1px;background:#f0e6c8;margin:2px 0;opacity:0.4}
+.vl-sub{font-family:'Courier Prime',monospace;font-size:0.32rem;color:var(--cream);opacity:0.6;letter-spacing:0.08em}
+input[type=range]{-webkit-appearance:none;height:3px;background:rgba(255,255,255,0.1);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle,#ddd 0%,#888 100%);box-shadow:0 0 4px rgba(0,0,0,0.5);cursor:pointer}
+.typewriter::after{content:'▋';animation:cursor-blink 0.8s step-end infinite;color:var(--amber)}
+.tuning-overlay,.m-tuning-overlay{position:absolute;inset:0;background:rgba(10,10,14,0.92);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:100}
+.tuning-overlay.active,.m-tuning-overlay.active{display:flex}
+.tuning-static{font-family:'Courier Prime',monospace;font-size:0.7rem;color:var(--amber);letter-spacing:0.3em;animation:static-flicker 0.1s infinite}
+.tuning-wave,.m-tuning-wave{display:flex;gap:3px;align-items:center;height:30px}
+.tuning-wave span,.m-tuning-wave span{width:3px;background:var(--amber);border-radius:2px;animation:wave-anim 0.3s ease-in-out infinite alternate;animation-delay:calc(var(--i)*0.05s)}
+.tuning-name{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--amber);letter-spacing:0.2em}
+.liner-card{margin:16px;background:#111620;border:1px solid rgba(59,164,232,0.12);border-radius:2px;padding:16px;position:relative;animation:card-in 0.5s ease}
+.liner-card::before{content:'';position:absolute;top:-1px;left:16px;right:16px;height:2px;background:linear-gradient(90deg,transparent,var(--amber-dim),transparent)}
+.tape-strip{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:40px;height:16px;background:rgba(59,164,232,0.3);border-radius:1px;border:1px solid rgba(59,164,232,0.4)}
+.fact-category{font-family:'Courier Prime',monospace;font-size:0.55rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase;margin-bottom:8px;opacity:0.8}
+.fact-text{font-family:'Courier Prime',monospace;font-size:0.78rem;color:#d2b48c;line-height:1.6;font-style:italic}
+.fact-source{font-family:'Courier Prime',monospace;font-size:0.58rem;color:var(--cream-dim);opacity:0.5;margin-top:8px;text-align:right}
+.album-thumb{width:64px;height:64px;border-radius:2px;border:3px solid #1a2535;flex-shrink:0;background:#222;display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.listeners-dot{width:6px;height:6px;border-radius:50%;background:var(--green-vu);box-shadow:0 0 6px rgba(74,232,112,0.6);animation:blink 2s ease infinite}
+
+/* ===================== DESKTOP ===================== */
+#desktop-ui header{width:100%;padding:18px 40px 14px;background:linear-gradient(180deg,var(--walnut) 0%,var(--walnut-lt) 60%,transparent 100%);border-bottom:2px solid #1a2535;display:flex;align-items:center;justify-content:space-between;position:relative}
+#desktop-ui header::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amber-dim),transparent)}
+.logo{font-family:'Bebas Neue',cursive;font-size:2.4rem;letter-spacing:0.12em;color:var(--cream);text-shadow:0 0 20px var(--amber),0 0 40px rgba(59,164,232,0.3);line-height:1}
+.logo span{color:var(--amber);text-shadow:0 0 15px var(--amber),0 0 30px var(--amber)}
+.tagline{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--cream-dim);letter-spacing:0.25em;text-transform:uppercase;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:20px}
+.on-air{display:flex;align-items:center;gap:8px;font-family:'Courier Prime',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--cream-dim);text-transform:uppercase}
+.on-air-dot{width:10px;height:10px;border-radius:50%;background:var(--red-vu);box-shadow:0 0 8px var(--red-vu),0 0 16px rgba(232,59,59,0.5);animation:blink 1.4s ease-in-out infinite}
+.d-clock{font-family:'Courier Prime',monospace;font-size:1rem;color:var(--amber);letter-spacing:0.1em;text-shadow:0 0 10px var(--amber-dim)}
+.main-container{display:grid;grid-template-columns:1fr 380px 340px;gap:0;width:100%;max-width:1400px;flex:1}
+.stations-panel{background:linear-gradient(180deg,#0f1520,#0a0f18);border-right:1px solid #181f2c;padding:20px 0;overflow-y:auto;max-height:calc(100vh - 120px)}
+.stations-panel::-webkit-scrollbar{width:4px}.stations-panel::-webkit-scrollbar-thumb{background:var(--walnut-lt);border-radius:2px}
+.group-label{font-family:'Courier Prime',monospace;font-size:0.6rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase;padding:10px 20px 6px;border-bottom:1px solid rgba(59,164,232,0.15);margin-bottom:4px}
+.station-item{display:flex;align-items:center;gap:12px;padding:8px 20px;cursor:pointer;transition:all 0.2s;border-left:2px solid transparent}
+.station-item:hover{background:rgba(59,164,232,0.06);border-left-color:rgba(59,164,232,0.4)}
+.station-item.active{background:rgba(59,164,232,0.1);border-left-color:var(--amber)}
+.station-icon{font-size:1rem;width:24px;text-align:center;flex-shrink:0}
+.station-info{flex:1;min-width:0}
+.station-name{font-family:'Special Elite',cursive;font-size:0.8rem;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.station-item.active .station-name{color:var(--amber)}
+.station-desc{font-family:'Courier Prime',monospace;font-size:0.58rem;color:var(--cream-dim);opacity:0.7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.freq-badge{font-family:'Courier Prime',monospace;font-size:0.55rem;color:var(--amber-dim);opacity:0.6;flex-shrink:0}
+.player-panel{display:flex;flex-direction:column;align-items:center;background:linear-gradient(180deg,#12182a,#0c1020);padding:30px 20px;position:relative;border-right:1px solid #181f2c}
+.vinyl-container{position:relative;width:220px;height:220px;margin-bottom:28px}
+.vinyl-record{width:220px;height:220px;position:relative}
+.vinyl-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;overflow:hidden;z-index:2;box-shadow:0 2px 10px rgba(0,0,0,0.5)}
+.tonearm{position:absolute;top:10px;right:-20px;width:100px;height:100px;transform-origin:90% 10%;transition:transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
+.now-playing-label{font-family:'Courier Prime',monospace;font-size:0.58rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase;margin-bottom:8px;opacity:0.8}
+.track-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;color:var(--cream);text-align:center;line-height:1.2;margin-bottom:4px}
+.track-artist{font-family:'Special Elite',cursive;font-size:0.85rem;color:var(--cream-dim);text-align:center;margin-bottom:4px}
+.track-year{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--amber-dim);text-align:center;margin-bottom:20px;letter-spacing:0.1em}
+.current-station-display{font-family:'Courier Prime',monospace;font-size:0.62rem;color:var(--amber);letter-spacing:0.2em;text-transform:uppercase;text-align:center;margin-bottom:20px;padding:5px 12px;border:1px solid rgba(59,164,232,0.2);border-radius:2px;background:rgba(59,164,232,0.05)}
+.progress-container{width:100%;margin-bottom:16px}
+.progress-bar{width:100%;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--amber-dim),var(--amber));box-shadow:0 0 6px var(--amber);transition:width 1s linear}
+.time-display{display:flex;justify-content:space-between;margin-top:4px}
+.time-display span{font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--cream-dim);opacity:0.6}
+.vu-section{display:flex;gap:16px;align-items:flex-end;margin-bottom:20px;background:rgba(0,0,0,0.3);padding:12px 16px;border-radius:4px;border:1px solid rgba(255,255,255,0.04);width:100%;justify-content:center}
+.vu-meter{display:flex;flex-direction:column;align-items:center;gap:4px}
+.vu-label{font-family:'Courier Prime',monospace;font-size:0.5rem;color:var(--cream-dim);letter-spacing:0.2em;opacity:0.6;text-transform:uppercase}
+.vu-bars{display:flex;gap:2px;align-items:flex-end}
+.vu-bar{width:5px;border-radius:1px;transition:height 0.08s ease}
+.vu-bar.green{background:var(--green-vu);box-shadow:0 0 4px rgba(74,232,112,0.4)}
+.vu-bar.amber{background:var(--amber);box-shadow:0 0 4px rgba(59,164,232,0.4)}
+.vu-bar.red{background:var(--red-vu);box-shadow:0 0 4px rgba(232,59,59,0.4)}
+.vu-needle-container{width:80px;height:40px;position:relative;background:#0d1018;border:1px solid #223;border-radius:2px;overflow:hidden;box-shadow:inset 0 1px 4px rgba(0,0,0,0.8)}
+.vu-needle-bg{position:absolute;inset:0;background:radial-gradient(ellipse 100% 200% at 50% 100%,#0a0f1a 0%,#111 70%)}
+.vu-scale{position:absolute;bottom:4px;left:4px;right:4px;height:30px;border-bottom:1px solid #334;border-left:1px solid #334;border-right:1px solid #334;border-radius:0 0 4px 4px}
+.vu-needle{position:absolute;bottom:4px;left:50%;width:1.5px;height:28px;background:linear-gradient(to top,#888,#ccc);transform-origin:bottom center;transform:rotate(-30deg) translateX(-50%);transition:transform 0.12s ease}
+.amber-glow-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber),0 0 12px var(--amber);animation:glow-pulse 2s ease-in-out infinite;align-self:center}
+.visualizer-canvas{width:100%;height:50px;background:rgba(0,0,0,0.3);border-radius:2px;display:block;margin-bottom:12px}
+.crackle-section{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.control-row{display:flex;align-items:center;gap:12px}
+.control-label{font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--cream-dim);letter-spacing:0.15em;text-transform:uppercase;width:70px;flex-shrink:0;opacity:0.8}
+.ctrl-val{font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--amber-dim);width:30px;text-align:right}
+.play-btn{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#1a2d40,#0a1520);border:2px solid #1e4060;box-shadow:0 4px 12px rgba(0,0,0,0.6),inset 0 1px 2px rgba(255,200,100,0.15);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-size:1.2rem;color:var(--cream)}
+.play-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,0.7),0 0 20px rgba(59,164,232,0.3)}
+.play-btn:active{transform:translateY(1px)}
+.liner-panel{background:#0f0f0f;overflow-y:auto;max-height:calc(100vh - 120px);display:flex;flex-direction:column}
+.liner-panel::-webkit-scrollbar{width:4px}.liner-panel::-webkit-scrollbar-thumb{background:var(--walnut-lt);border-radius:2px}
+.liner-header{background:var(--walnut);padding:14px 20px;border-bottom:1px solid #1a2535;position:sticky;top:0;z-index:10}
+.liner-header-title{font-family:'Courier Prime',monospace;font-size:0.6rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase}
+.album-details{display:flex;gap:12px;align-items:flex-start;padding:16px}
+.album-text{flex:1}
+.album-name{font-family:'Playfair Display',serif;font-size:0.85rem;font-style:italic;color:var(--cream);margin-bottom:4px}
+.album-meta{font-family:'Courier Prime',monospace;font-size:0.62rem;color:var(--cream-dim);opacity:0.7;line-height:1.5}
+.listeners-row{display:flex;align-items:center;gap:8px;margin:0 16px 8px;padding:8px 12px;background:var(--amber-faint);border:1px solid rgba(59,164,232,0.08);border-radius:2px}
+.listeners-text{font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--cream-dim);opacity:0.7}
+.listeners-count{font-family:'Courier Prime',monospace;font-size:0.65rem;color:var(--green-vu);margin-left:auto}
+.dial-footer{width:100%;background:linear-gradient(180deg,var(--walnut-lt),var(--walnut));border-top:2px solid #1a2535;padding:16px 0 12px;position:relative}
+.dial-footer::before{content:'';position:absolute;top:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amber-dim),transparent)}
+.dial-wrapper{position:relative;overflow:hidden;padding:0 60px}
+.dial-track{display:flex;align-items:center;transition:transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);cursor:grab}
+.dial-track:active{cursor:grabbing}
+.dial-station{flex-shrink:0;width:120px;text-align:center;padding:6px 8px;cursor:pointer;transition:all 0.2s;position:relative}
+.dial-station::after{content:'|';position:absolute;top:0;right:0;color:rgba(255,255,255,0.1);font-size:0.7rem}
+.dial-sname{font-family:'Special Elite',cursive;font-size:0.7rem;color:var(--cream-dim);opacity:0.5;transition:all 0.2s}
+.dial-station.active .dial-sname{color:var(--amber);opacity:1;text-shadow:0 0 8px rgba(59,164,232,0.5)}
+.dial-sfreq{font-family:'Courier Prime',monospace;font-size:0.5rem;color:var(--amber-dim);opacity:0.4}
+.dial-station.active .dial-sfreq{opacity:0.8}
+.dial-needle{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--amber);box-shadow:0 0 6px var(--amber);pointer-events:none;z-index:10;transform:translateX(-50%)}
+.dial-needle::before{content:'▼';position:absolute;top:-2px;left:50%;transform:translateX(-50%);color:var(--amber);font-size:0.5rem}
+.dial-wrapper::before,.dial-wrapper::after{content:'';position:absolute;top:0;bottom:0;width:80px;z-index:5;pointer-events:none}
+.dial-wrapper::before{left:0;background:linear-gradient(to right,var(--walnut-lt),transparent)}
+.dial-wrapper::after{right:0;background:linear-gradient(to left,var(--walnut-lt),transparent)}
+.dial-controls{display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 20px 0}
+.dial-btn{background:radial-gradient(circle at 40% 35%,#1a2535,#0a1020);border:1px solid #1e3550;color:var(--cream-dim);padding:4px 12px;font-family:'Courier Prime',monospace;font-size:0.6rem;letter-spacing:0.2em;cursor:pointer;border-radius:2px;transition:all 0.15s}
+.dial-btn:hover{color:var(--amber);border-color:var(--amber-dim)}
+.dial-freq-disp{font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--amber);letter-spacing:0.2em}
+
+/* ===================== MOBILE ===================== */
+.m-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;background:linear-gradient(180deg,var(--walnut) 0%,transparent 100%);flex-shrink:0;position:relative;z-index:5}
+.m-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(59,164,232,0.3),transparent)}
+.m-logo{font-family:'Bebas Neue',cursive;font-size:1.8rem;letter-spacing:0.12em;color:var(--cream);text-shadow:0 0 14px var(--amber)}
+.m-logo span{color:var(--amber)}
+.m-header-right{display:flex;align-items:center;gap:10px}
+.m-on-air{display:flex;align-items:center;gap:5px}
+.m-on-air-dot{width:7px;height:7px;border-radius:50%;background:var(--red-vu);box-shadow:0 0 6px var(--red-vu);animation:blink 1.4s ease-in-out infinite}
+.m-on-air-label{font-family:'Courier Prime',monospace;font-size:0.58rem;color:var(--cream-dim);letter-spacing:0.2em;text-transform:uppercase}
+.m-clock{font-family:'Courier Prime',monospace;font-size:0.85rem;color:var(--amber)}
+.m-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 24px 0;position:relative;overflow:hidden}
+.m-glow{position:absolute;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(59,164,232,0.08) 0%,transparent 70%);animation:glow-breathe 4s ease-in-out infinite;pointer-events:none}
+.m-vinyl-wrap{position:relative;width:220px;height:220px;margin-bottom:18px}
+.m-vinyl{width:220px;height:220px;box-shadow:0 0 0 3px #333,0 0 0 4px #1a1a1a,0 8px 40px rgba(0,0,0,0.9),0 0 60px rgba(59,164,232,0.05)}
+.m-vinyl-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;overflow:hidden;z-index:2;box-shadow:0 2px 10px rgba(0,0,0,0.5)}
+.m-tonearm{position:absolute;top:6px;right:-18px;width:90px;height:90px;transform-origin:90% 10%;transition:transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94)}
+.m-track-info{text-align:center;margin-bottom:12px;padding:0 10px}
+.m-now-label{font-family:'Courier Prime',monospace;font-size:0.55rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase;margin-bottom:6px;opacity:0.8}
+.m-track-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-style:italic;color:var(--cream);line-height:1.2;margin-bottom:3px}
+.m-track-artist{font-family:'Special Elite',cursive;font-size:0.8rem;color:var(--cream-dim);margin-bottom:2px}
+.m-track-year{font-family:'Courier Prime',monospace;font-size:0.56rem;color:var(--amber-dim);letter-spacing:0.06em}
+.m-station-tag{display:flex;align-items:center;gap:6px;font-family:'Courier Prime',monospace;font-size:0.56rem;color:var(--amber);letter-spacing:0.12em;text-transform:uppercase;background:var(--amber-faint);border:1px solid rgba(59,164,232,0.2);border-radius:20px;padding:4px 12px;margin-bottom:12px;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.m-progress{width:100%;margin-bottom:6px}
+.m-prog-bar{width:100%;height:2px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.m-prog-fill{height:100%;background:linear-gradient(90deg,var(--amber-dim),var(--amber));box-shadow:0 0 5px var(--amber);transition:width 1s linear}
+.m-time{display:flex;justify-content:space-between;margin-top:3px}
+.m-time span{font-family:'Courier Prime',monospace;font-size:0.52rem;color:var(--cream-dim);opacity:0.5}
+.m-vu-row{display:flex;gap:2px;align-items:flex-end;height:20px;margin-bottom:12px;justify-content:center}
+.m-vu-b{width:4px;border-radius:1px}
+.m-vu-b.g{background:var(--green-vu)}.m-vu-b.a{background:var(--amber)}.m-vu-b.r{background:var(--red-vu)}
+.m-controls{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:14px}
+.m-play-btn{width:64px;height:64px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#1a2d40,#0a1520);border:2px solid #1e4060;box-shadow:0 4px 16px rgba(0,0,0,0.7),inset 0 1px 2px rgba(100,180,255,0.15),0 0 20px rgba(59,164,232,0.15);color:var(--cream);font-size:1.4rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s}
+.m-play-btn:active{transform:scale(0.94)}
+.m-side-btn{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:var(--cream-dim);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s}
+.m-side-btn:active{background:rgba(59,164,232,0.15);border-color:var(--amber-dim)}
+.m-crackle-row{display:flex;align-items:center;gap:10px;width:100%;padding:0 10px;margin-bottom:8px}
+.m-visualizer{width:100%;height:34px;background:rgba(0,0,0,0.2);border-radius:2px;display:block;margin-bottom:6px}
+.m-swipe-hint{font-family:'Courier Prime',monospace;font-size:0.52rem;color:var(--cream-dim);opacity:0.25;letter-spacing:0.15em;text-align:center;padding:3px 0 6px;flex-shrink:0}
+.m-liner-btn{position:absolute;top:16px;right:16px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(59,164,232,0.1);border:1px solid rgba(59,164,232,0.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:0.9rem;transition:all 0.2s}
+.m-liner-btn:active{background:rgba(59,164,232,0.25)}
+.m-sheet-trigger{flex-shrink:0;background:var(--walnut);border-top:1px solid rgba(59,164,232,0.15);cursor:pointer;position:relative;z-index:200}
+.m-sheet-handle-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 8px}
+.m-sheet-grip{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:32px;height:3px;background:rgba(255,255,255,0.15);border-radius:2px}
+.m-sheet-label{font-family:'Courier Prime',monospace;font-size:0.6rem;letter-spacing:0.25em;color:var(--amber);text-transform:uppercase}
+.m-sheet-current{font-family:'Special Elite',cursive;font-size:0.75rem;color:var(--cream-dim)}
+.m-sheet-arrow{font-size:0.7rem;color:var(--cream-dim);transition:transform 0.3s}
+.m-sheet{position:fixed;bottom:0;left:0;right:0;height:72vh;background:#0f1420;border-top:1px solid rgba(59,164,232,0.2);border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);z-index:500;display:flex;flex-direction:column;overflow:hidden}
+.m-sheet.open{transform:translateY(0)}
+.m-sheet-header{padding:16px 20px 10px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.m-sheet-title{font-family:'Courier Prime',monospace;font-size:0.65rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase}
+.m-sheet-close{font-size:1.2rem;color:var(--cream-dim);cursor:pointer;padding:4px 8px}
+.m-sheet-body{overflow-y:auto;flex:1;padding-bottom:20px}
+.m-sheet-body::-webkit-scrollbar{width:3px}.m-sheet-body::-webkit-scrollbar-thumb{background:var(--walnut-lt)}
+.m-group-label{font-family:'Courier Prime',monospace;font-size:0.58rem;letter-spacing:0.28em;color:var(--amber);text-transform:uppercase;padding:14px 20px 6px;opacity:0.8;border-bottom:1px solid rgba(59,164,232,0.1)}
+.m-station-row{display:flex;align-items:center;gap:14px;padding:11px 20px;cursor:pointer;border-left:3px solid transparent;transition:all 0.2s}
+.m-station-row:active{background:rgba(59,164,232,0.08)}
+.m-station-row.active{background:rgba(59,164,232,0.1);border-left-color:var(--amber)}
+.m-station-icon{font-size:1.1rem;width:26px;text-align:center}
+.m-station-text{flex:1}
+.m-station-name{font-family:'Special Elite',cursive;font-size:0.85rem;color:var(--cream)}
+.m-station-row.active .m-station-name{color:var(--amber)}
+.m-station-sub{font-family:'Courier Prime',monospace;font-size:0.58rem;color:var(--cream-dim);opacity:0.6}
+.m-station-freq{font-family:'Courier Prime',monospace;font-size:0.58rem;color:var(--amber-dim);opacity:0.5}
+.m-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:450;display:none}
+.m-backdrop.active{display:block}
+.m-liner-sheet{position:fixed;inset:0;background:#0f0f0f;z-index:600;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);overflow-y:auto;display:flex;flex-direction:column}
+.m-liner-sheet.open{transform:translateY(0)}
+.m-liner-sheet-header{padding:16px 20px;background:var(--walnut);border-bottom:1px solid rgba(59,164,232,0.15);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.m-liner-sheet-title{font-family:'Courier Prime',monospace;font-size:0.65rem;letter-spacing:0.3em;color:var(--amber);text-transform:uppercase}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div>
-    <div class="logo">DAJZ<span>.</span>CLUB</div>
-    <div class="tagline">The Jazz Club — Est. 2026</div>
-  </div>
-  <div class="header-right">
-    <div class="on-air"><div class="on-air-dot"></div> On Air</div>
-    <div class="clock" id="clock">00:00:00</div>
-  </div>
-</header>
-
-<!-- MAIN -->
-<div class="main-container">
-
-  <!-- LEFT: STATIONS -->
-  <div class="stations-panel" id="stationsPanel">
-
-    <div class="station-group">
-      <div class="group-label">◈ The Essentials</div>
-      <div class="station-item active" data-station="ivory" onclick="switchStation(this)">
-        <div class="station-icon">🎹</div>
-        <div class="station-info">
-          <div class="station-name">Ivory Keys</div>
-          <div class="station-desc">Piano solo & trios</div>
-        </div>
-        <div class="freq-badge">88.1</div>
-      </div>
-      <div class="station-item" data-station="horn" onclick="switchStation(this)">
-        <div class="station-icon">🎺</div>
-        <div class="station-info">
-          <div class="station-name">The Horn Section</div>
-          <div class="station-desc">Trumpet & Saxophone</div>
-        </div>
-        <div class="freq-badge">90.3</div>
-      </div>
-      <div class="station-item" data-station="strings" onclick="switchStation(this)">
-        <div class="station-icon">🎻</div>
-        <div class="station-info">
-          <div class="station-name">Deep Strings</div>
-          <div class="station-desc">Bass & cello front</div>
-        </div>
-        <div class="freq-badge">92.7</div>
-      </div>
-      <div class="station-item" data-station="bigband" onclick="switchStation(this)">
-        <div class="station-icon">🎷</div>
-        <div class="station-info">
-          <div class="station-name">Big Band Era</div>
-          <div class="station-desc">Swing & orchestras</div>
-        </div>
-        <div class="freq-badge">94.1</div>
-      </div>
-      <div class="station-item" data-station="vocal" onclick="switchStation(this)">
-        <div class="station-icon">🎙</div>
-        <div class="station-info">
-          <div class="station-name">Vocal Standards</div>
-          <div class="station-desc">The great voices</div>
-        </div>
-        <div class="freq-badge">95.5</div>
-      </div>
+<!-- ===== DESKTOP UI ===== -->
+<div id="desktop-ui">
+  <header>
+    <div>
+      <div class="logo">DAJZ<span>.</span>CLUB</div>
+      <div class="tagline">The Jazz Club — Est. 2026</div>
     </div>
-
-    <div class="station-group">
-      <div class="group-label">◈ Time Travel</div>
-      <div class="station-item" data-station="roaring" onclick="switchStation(this)">
-        <div class="station-icon">🌀</div>
-        <div class="station-info">
-          <div class="station-name">The Roaring 20s</div>
-          <div class="station-desc">New Orleans origins</div>
-        </div>
-        <div class="freq-badge">97.3</div>
-      </div>
-      <div class="station-item" data-station="bebop" onclick="switchStation(this)">
-        <div class="station-icon">⚡</div>
-        <div class="station-info">
-          <div class="station-name">Bebop Revolution</div>
-          <div class="station-desc">Fast, complex, raw</div>
-        </div>
-        <div class="freq-badge">99.1</div>
-      </div>
-      <div class="station-item" data-station="kindofblue" onclick="switchStation(this)">
-        <div class="station-icon">🌊</div>
-        <div class="station-info">
-          <div class="station-name">Kind of Blue</div>
-          <div class="station-desc">Cool & modal jazz</div>
-        </div>
-        <div class="freq-badge">101.5</div>
-      </div>
-      <div class="station-item" data-station="fusion" onclick="switchStation(this)">
-        <div class="station-icon">🔌</div>
-        <div class="station-info">
-          <div class="station-name">Electric Fusion</div>
-          <div class="station-desc">70s experimentation</div>
-        </div>
-        <div class="freq-badge">103.7</div>
-      </div>
-      <div class="station-item" data-station="modern" onclick="switchStation(this)">
-        <div class="station-icon">🔮</div>
-        <div class="station-info">
-          <div class="station-name">Modern Scene</div>
-          <div class="station-desc">Contemporary jazz</div>
-        </div>
-        <div class="freq-badge">105.9</div>
-      </div>
+    <div class="header-right">
+      <div class="on-air"><div class="on-air-dot"></div>On Air</div>
+      <div class="d-clock" id="d-clock">00:00:00</div>
     </div>
+  </header>
 
-    <div class="station-group">
-      <div class="group-label">◈ Mood & Atmosphere</div>
-      <div class="station-item" data-station="midnight" onclick="switchStation(this)">
-        <div class="station-icon">🌙</div>
-        <div class="station-info">
-          <div class="station-name">Midnight Blue</div>
-          <div class="station-desc">Late nights & rain</div>
-        </div>
-        <div class="freq-badge">107.1</div>
-      </div>
-      <div class="station-item" data-station="coffee" onclick="switchStation(this)">
-        <div class="station-icon">☕</div>
-        <div class="station-info">
-          <div class="station-name">The Coffeehouse</div>
-          <div class="station-desc">Focus & flow</div>
-        </div>
-        <div class="freq-badge">108.3</div>
-      </div>
-      <div class="station-item" data-station="spike" onclick="switchStation(this)">
-        <div class="station-icon">🔥</div>
-        <div class="station-info">
-          <div class="station-name">Spike It Up</div>
-          <div class="station-desc">High energy hard bop</div>
-        </div>
-        <div class="freq-badge">89.7</div>
-      </div>
-      <div class="station-item" data-station="brunch" onclick="switchStation(this)">
-        <div class="station-icon">☀️</div>
-        <div class="station-info">
-          <div class="station-name">Sunday Brunch</div>
-          <div class="station-desc">Easy & sunny</div>
-        </div>
-        <div class="freq-badge">91.3</div>
-      </div>
-      <div class="station-item" data-station="cellar" onclick="switchStation(this)">
-        <div class="station-icon">🕳</div>
-        <div class="station-info">
-          <div class="station-name">Underground Cellar</div>
-          <div class="station-desc">Avant-garde & free</div>
-        </div>
-        <div class="freq-badge">93.5</div>
-      </div>
-    </div>
+  <div class="main-container">
+    <div class="stations-panel" id="d-stations"></div>
 
-    <div class="station-group">
-      <div class="group-label">◈ Special Curations</div>
-      <div class="station-item" data-station="bossa" onclick="switchStation(this)">
-        <div class="station-icon">🌴</div>
-        <div class="station-info">
-          <div class="station-name">Bossa & Beyond</div>
-          <div class="station-desc">Jazz meets samba</div>
-        </div>
-        <div class="freq-badge">96.5</div>
+    <div class="player-panel">
+      <div class="tuning-overlay" id="d-tuning">
+        <div class="tuning-static">SINTONIZANDO...</div>
+        <div class="tuning-wave" id="d-tw"></div>
+        <div class="tuning-name" id="d-tn"></div>
       </div>
-      <div class="station-item" data-station="bluenote" onclick="switchStation(this)">
-        <div class="station-icon">💿</div>
-        <div class="station-info">
-          <div class="station-name">Blue Note Vault</div>
-          <div class="station-desc">The legendary label</div>
+      <div class="vinyl-container">
+        <div class="vinyl-record" id="d-vinyl">
+          <div class="vinyl-label"><div class="vinyl-label-inner"><div class="vl-name">DAJZ</div><div class="vl-line"></div><div class="vl-sub">CLUB</div></div></div>
         </div>
-        <div class="freq-badge">98.7</div>
-      </div>
-      <div class="station-item" data-station="cinematic" onclick="switchStation(this)">
-        <div class="station-icon">🎬</div>
-        <div class="station-info">
-          <div class="station-name">Cinematic Jazz</div>
-          <div class="station-desc">Film noir & scores</div>
-        </div>
-        <div class="freq-badge">100.9</div>
-      </div>
-      <div class="station-item" data-station="sampling" onclick="switchStation(this)">
-        <div class="station-icon">🎧</div>
-        <div class="station-info">
-          <div class="station-name">Sampling Roots</div>
-          <div class="station-desc">Jazz sampled in Hip Hop</div>
-        </div>
-        <div class="freq-badge">102.5</div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- CENTER: PLAYER -->
-  <div class="player-panel">
-
-    <!-- Tuning overlay -->
-    <div class="tuning-overlay" id="tuningOverlay">
-      <div class="tuning-static">SINTONIZANDO...</div>
-      <div class="tuning-wave" id="tuningWave"></div>
-      <div class="station-loading" id="tuningStation"></div>
-    </div>
-
-    <!-- Vinyl -->
-    <div class="vinyl-container">
-      <div class="vinyl-record" id="vinylRecord">
-        <div class="vinyl-label" id="vinylLabel">
-          <!-- Art Deco label color fill -->
-          <div style="width:100%;height:100%;background:radial-gradient(circle, #c4780f 0%, #6a3808 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;">
-            <div style="font-family:'Bebas Neue',cursive;font-size:0.5rem;color:#f0e6c8;letter-spacing:0.1em;">DAJZ</div>
-            <div style="width:20px;height:1px;background:#f0e6c8;margin:2px 0;opacity:0.4;"></div>
-            <div style="font-family:'Courier Prime',monospace;font-size:0.32rem;color:#f0e6c8;opacity:0.6;letter-spacing:0.08em;">CLUB</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tonearm SVG -->
-      <svg class="tonearm" id="tonearm" viewBox="0 0 100 100">
-        <g transform-origin="85 12">
+        <svg class="tonearm" viewBox="0 0 100 100">
           <line x1="85" y1="12" x2="25" y2="75" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
           <circle cx="85" cy="12" r="6" fill="#555" stroke="#777" stroke-width="1"/>
           <circle cx="22" cy="78" r="4" fill="#333" stroke="#888" stroke-width="1.5"/>
           <line x1="22" y1="78" x2="10" y2="90" stroke="#777" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="10" cy="90" r="2.5" fill="#c4780f" stroke="#e8941a" stroke-width="0.5"/>
-        </g>
+          <circle cx="10" cy="90" r="2.5" fill="var(--amber-dim)" stroke="var(--amber)" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <div class="now-playing-label">— Now Playing —</div>
+      <div class="track-title" id="d-title">Waltz for Debby</div>
+      <div class="track-artist" id="d-artist">Bill Evans Trio</div>
+      <div class="track-year" id="d-year">1961 · Riverside Records · NYC</div>
+      <div class="current-station-display" id="d-stag">📻 Ivory Keys — 88.1 FM</div>
+      <div class="progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="d-prog" style="width:37%"></div></div>
+        <div class="time-display"><span id="d-el">3:42</span><span style="font-size:0.5rem;opacity:0.4;">► RADIO</span><span id="d-dur">6:58</span></div>
+      </div>
+      <div class="vu-section">
+        <div class="vu-meter"><div class="vu-label">L</div><div class="vu-needle-container"><div class="vu-needle-bg"></div><div class="vu-scale"></div><div class="vu-needle" id="d-nl"></div></div></div>
+        <div class="amber-glow-dot"></div>
+        <div class="vu-meter"><div class="vu-label">R</div><div class="vu-needle-container"><div class="vu-needle-bg"></div><div class="vu-scale"></div><div class="vu-needle" id="d-nr"></div></div></div>
+        <div style="display:flex;flex-direction:column;gap:4px;margin-left:12px;"><div class="vu-bars" id="d-vul"></div><div class="vu-bars" id="d-vur"></div></div>
+      </div>
+      <canvas class="visualizer-canvas" id="d-cv" width="340" height="50"></canvas>
+      <div class="crackle-section">
+        <div class="control-row"><span class="control-label">Volume</span><input type="range" id="d-vol" min="0" max="100" value="80" oninput="setVol(this.value,'d-vv')" style="flex:1"><span class="ctrl-val" id="d-vv">80</span></div>
+        <div class="control-row"><span class="control-label">Vinil</span><input type="range" id="d-crk" min="0" max="100" value="30" oninput="setCrk(this.value,'d-cv2')" style="flex:1"><span class="ctrl-val" id="d-cv2">30</span></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;">
+        <button class="play-btn" id="d-play" onclick="togglePlay()">▶</button>
+      </div>
+    </div>
+
+    <div class="liner-panel">
+      <div class="liner-header"><div class="liner-header-title">◈ Liner Notes & Curiosities</div></div>
+      <div class="album-details"><div class="album-thumb" id="d-ath">🎹</div><div class="album-text"><div class="album-name" id="d-an">Waltz for Debby</div><div class="album-meta" id="d-am">Bill Evans Trio<br>Riverside Records, 1961</div></div></div>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin:0 16px">
+      <div class="listeners-row"><div class="listeners-dot"></div><div class="listeners-text" id="d-ll">Ouvindo — Ivory Keys</div><div class="listeners-count" id="d-lc">247</div></div>
+      <div id="d-facts"></div>
+    </div>
+  </div>
+
+  <div class="dial-footer">
+    <div class="dial-wrapper">
+      <div class="dial-needle"></div>
+      <div class="dial-track" id="d-dial"></div>
+    </div>
+    <div class="dial-controls">
+      <button class="dial-btn" onclick="dPrev()">◀ PREV</button>
+      <span class="dial-freq-disp" id="d-df">88.1 FM</span>
+      <button class="dial-btn" onclick="dNext()">NEXT ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MOBILE UI ===== -->
+<div id="mobile-ui">
+  <div class="m-tuning-overlay" id="m-tuning">
+    <div class="tuning-static">SINTONIZANDO...</div>
+    <div class="m-tuning-wave" id="m-tw"></div>
+    <div class="tuning-name" id="m-tn"></div>
+  </div>
+
+  <div class="m-header">
+    <div><div class="m-logo">DAJZ<span>.</span>CLUB</div></div>
+    <div class="m-header-right">
+      <div class="m-on-air"><div class="m-on-air-dot"></div><div class="m-on-air-label">On Air</div></div>
+      <div class="m-clock" id="m-clock">00:00</div>
+    </div>
+  </div>
+
+  <div class="m-body">
+    <div class="m-liner-btn" onclick="openLiner()">📋</div>
+    <div class="m-glow"></div>
+
+    <div class="m-vinyl-wrap">
+      <div class="m-vinyl" id="m-vinyl">
+        <div class="m-vinyl-label"><div class="vinyl-label-inner"><div class="vl-name">DAJZ</div><div class="vl-line"></div><div class="vl-sub">CLUB</div></div></div>
+      </div>
+      <svg class="m-tonearm" viewBox="0 0 100 100">
+        <line x1="85" y1="12" x2="25" y2="75" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="85" cy="12" r="6" fill="#555" stroke="#777" stroke-width="1"/>
+        <circle cx="22" cy="78" r="4" fill="#333" stroke="#888" stroke-width="1.5"/>
+        <line x1="22" y1="78" x2="10" y2="90" stroke="#777" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="10" cy="90" r="2.5" fill="var(--amber-dim)" stroke="var(--amber)" stroke-width="0.5"/>
       </svg>
     </div>
 
-    <!-- Now Playing -->
-    <div class="now-playing-label">— Now Playing —</div>
-    <div class="track-title" id="trackTitle">Waltz for Debby</div>
-    <div class="track-artist" id="trackArtist">Bill Evans Trio</div>
-    <div class="track-year" id="trackYear">1961 · Riverside Records · New York City</div>
-
-    <!-- Current Station Display -->
-    <div class="current-station-display" id="currentStationDisplay">📻 Ivory Keys — 88.1 FM</div>
-
-    <!-- Progress (Radio mode — just visual) -->
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width: 37%"></div>
-      </div>
-      <div class="time-display">
-        <span id="timeElapsed">3:42</span>
-        <span style="font-size:0.5rem;opacity:0.4;">► RADIO — no seeking</span>
-        <span id="timeDuration">6:58</span>
-      </div>
+    <div class="m-track-info">
+      <div class="m-now-label">— Now Playing —</div>
+      <div class="m-track-title" id="m-title">Waltz for Debby</div>
+      <div class="m-track-artist" id="m-artist">Bill Evans Trio</div>
+      <div class="m-track-year" id="m-year">1961 · Riverside Records</div>
     </div>
-
-    <!-- VU Meters -->
-    <div class="vu-section">
-      <div class="vu-meter">
-        <div class="vu-label">L</div>
-        <div class="vu-needle-container" id="vuLeft">
-          <div class="vu-needle-bg"></div>
-          <div class="vu-scale"></div>
-          <div class="vu-needle" id="needleL"></div>
-        </div>
-      </div>
-      <div class="amber-glow-dot"></div>
-      <div class="vu-meter">
-        <div class="vu-label">R</div>
-        <div class="vu-needle-container" id="vuRight">
-          <div class="vu-needle-bg"></div>
-          <div class="vu-scale"></div>
-          <div class="vu-needle" id="needleR"></div>
-        </div>
-      </div>
-      <!-- Bar VU meter -->
-      <div style="display:flex;flex-direction:column;gap:4px;margin-left:12px;">
-        <div class="vu-bars" id="vuBarsL"></div>
-        <div class="vu-bars" id="vuBarsR"></div>
-      </div>
+    <div class="m-station-tag" id="m-stag">📻 Ivory Keys — 88.1 FM</div>
+    <div class="m-vu-row" id="m-vu"></div>
+    <canvas class="m-visualizer" id="m-cv" width="360" height="34"></canvas>
+    <div class="m-progress">
+      <div class="m-prog-bar"><div class="m-prog-fill" id="m-prog" style="width:37%"></div></div>
+      <div class="m-time"><span id="m-el">3:42</span><span style="font-size:0.44rem;opacity:0.3;">RADIO</span><span id="m-dur">6:58</span></div>
     </div>
-
-    <!-- Visualizer Canvas -->
-    <div class="visualizer-container">
-      <canvas class="visualizer-canvas" id="visualizer" width="340" height="50"></canvas>
+    <div class="m-controls">
+      <div class="m-side-btn" onclick="dPrev()">◀</div>
+      <div class="m-play-btn" id="m-play" onclick="togglePlay()">▶</div>
+      <div class="m-side-btn" onclick="dNext()">▶▶</div>
     </div>
-
-    <!-- Crackle + Volume -->
-    <div class="crackle-section">
-      <div class="control-row">
-        <span class="control-label">Volume</span>
-        <input type="range" id="volumeSlider" min="0" max="100" value="80" oninput="setVolume(this.value)">
-        <span style="font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--amber-dim);width:30px;text-align:right;" id="volDisplay">80</span>
-      </div>
-      <div class="control-row">
-        <span class="control-label">Vinil</span>
-        <input type="range" id="crackleSlider" min="0" max="100" value="30" oninput="setCrackle(this.value)">
-        <span style="font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--amber-dim);width:30px;text-align:right;" id="crackleDisplay">30</span>
-      </div>
+    <div class="m-crackle-row">
+      <span style="font-size:0.85rem">💿</span>
+      <input type="range" id="m-crk" min="0" max="100" value="30" oninput="setCrk(this.value,'m-cv2')" style="flex:1">
+      <span style="font-family:'Courier Prime',monospace;font-size:0.55rem;color:var(--amber-dim);width:24px;text-align:right" id="m-cv2">30</span>
     </div>
-
-    <!-- Play button -->
-    <div class="play-zone">
-      <button class="play-btn" id="playBtn" onclick="togglePlay()">▶</button>
-    </div>
-
+    <div class="m-swipe-hint">▲ DESLIZE PARA ESTAÇÕES ▲</div>
   </div>
 
-  <!-- RIGHT: LINER NOTES -->
-  <div class="liner-panel">
-    <div class="liner-header">
-      <div class="liner-header-title">◈ Liner Notes & Curiosities</div>
+  <div class="m-sheet-trigger" onclick="toggleSheet()">
+    <div class="m-sheet-handle-bar">
+      <div class="m-sheet-grip"></div>
+      <div class="m-sheet-label">Estações</div>
+      <div class="m-sheet-current" id="m-sc">Ivory Keys</div>
+      <div class="m-sheet-arrow" id="m-sa">▲</div>
     </div>
-
-    <!-- Album details -->
-    <div class="album-details">
-      <div class="album-thumb" id="albumThumb"
-        style="background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;font-size:1.8rem;">🎹</div>
-      <div class="album-text">
-        <div class="album-name" id="albumName">Waltz for Debby</div>
-        <div class="album-meta" id="albumMeta">
-          Bill Evans Trio<br>
-          Riverside Records, 1961<br>
-          Gravado ao vivo no Village Vanguard
-        </div>
-      </div>
-    </div>
-
-    <hr class="liner-divider">
-
-    <!-- Listeners -->
-    <div class="listeners-row">
-      <div class="listeners-dot"></div>
-      <div class="listeners-text">Ouvindo agora — Ivory Keys</div>
-      <div class="listeners-count" id="listenersCount">247</div>
-    </div>
-
-    <!-- Facts cards -->
-    <div id="factsContainer"></div>
-
   </div>
 </div>
 
-<!-- DIAL FOOTER -->
-<div class="dial-footer">
-  <div class="dial-wrapper">
-    <div class="dial-needle"></div>
-    <div class="dial-track" id="dialTrack"></div>
-  </div>
-  <div class="dial-controls">
-    <button class="dial-btn" onclick="dialPrev()">◀ PREV</button>
-    <span style="font-family:'Courier Prime',monospace;font-size:0.6rem;color:var(--amber);letter-spacing:0.2em;" id="dialFreqDisplay">88.1 FM</span>
-    <button class="dial-btn" onclick="dialNext()">NEXT ▶</button>
-  </div>
+<!-- Sheet + backdrop -->
+<div class="m-backdrop" id="m-bd" onclick="closeSheet()"></div>
+<div class="m-sheet" id="m-sheet">
+  <div class="m-sheet-header"><div class="m-sheet-title">◈ Escolha a Estação</div><div class="m-sheet-close" onclick="closeSheet()">✕</div></div>
+  <div class="m-sheet-body" id="m-sb"></div>
+</div>
+
+<!-- Liner sheet -->
+<div class="m-liner-sheet" id="m-liner">
+  <div class="m-liner-sheet-header"><div class="m-liner-sheet-title">◈ Liner Notes</div><div class="m-sheet-close" onclick="closeLiner()">✕</div></div>
+  <div class="album-details" style="background:#0c1020"><div class="album-thumb" id="m-ath">🎹</div><div class="album-text"><div class="album-name" id="m-an">Waltz for Debby</div><div class="album-meta" id="m-am">Bill Evans Trio<br>Riverside, 1961</div></div></div>
+  <div class="listeners-row" style="margin:0 16px 8px"><div class="listeners-dot"></div><div class="listeners-text" id="m-ll">Ouvindo</div><div class="listeners-count" id="m-lc">247</div></div>
+  <div id="m-facts"></div>
+</div>
+
+<!-- Toggle pill -->
+<div id="ui-toggle" onclick="toggleMode()">
+  <span id="tg-icon">🖥️</span>
+  <span id="ui-toggle-label">Desktop</span>
 </div>
 
 <script>
-// ===== DATA =====
-const stations = [
-  { id:'ivory', name:'Ivory Keys', icon:'🎹', freq:'88.1', group:'essentials',
-    track:'Waltz for Debby', artist:'Bill Evans Trio', year:'1961 · Riverside Records · New York City',
-    album:'Waltz for Debby', albumEmoji:'🎹',
-    facts:[
-      { cat:'SOBRE A GRAVAÇÃO', text:'Gravado ao vivo no Village Vanguard, Nova York, em 25 de junho de 1961. O som ambiente dos clientes do clube, talheres e conversas ao fundo tornaram-se parte icônica do álbum.' },
-      { cat:'SOBRE O ARTISTA', text:'Bill Evans revolucionou a harmonia do jazz com seu uso único de acordes suspensos e o conceito de "impressionismo musical". Seu toque delicado no piano influenciou praticamente todos os pianistas de jazz das décadas seguintes.' },
-      { cat:'CURIOSIDADE HISTÓRICA', text:'Scott LaFaro, o contrabaixista do trio, faleceu em um acidente de carro apenas 10 dias após esta gravação. Este álbum tornou-se seu epitáfio musical.' },
-    ]
-  },
-  { id:'horn', name:'The Horn Section', icon:'🎺', freq:'90.3', group:'essentials',
-    track:'So What', artist:'Miles Davis', year:'1959 · Columbia Records · New York City',
-    album:'Kind of Blue', albumEmoji:'🎺',
-    facts:[
-      { cat:'SOBRE A FAIXA', text:'"So What" abre o álbum Kind of Blue com apenas dois acordes modais repetidos — uma radicalidade que chocou o mundo do jazz em 1959 e inaugurou o jazz modal.' },
-      { cat:'SOBRE O ARTISTA', text:'Miles Davis gravou Kind of Blue em apenas duas sessões, em março e abril de 1959. Nenhuma das faixas foi ensaiada extensivamente — Davis deu aos músicos esboços melódicos momentos antes de gravarem.' },
-    ]
-  },
-  { id:'strings', name:'Deep Strings', icon:'🎻', freq:'92.7', group:'essentials',
-    track:'Goodbye Pork Pie Hat', artist:'Charles Mingus', year:'1959 · Columbia Records',
-    album:'Mingus Ah Um', albumEmoji:'🎻',
-    facts:[
-      { cat:'SOBRE A COMPOSIÇÃO', text:'Mingus compôs esta peça como homenagem a Lester Young, que faleceu no mesmo dia em que Mingus soube da notícia. O chapéu "pork pie" era marca registrada de Young.' },
-      { cat:'SOBRE O ARTISTA', text:'Charles Mingus era conhecido por sua personalidade explosiva e por exigir perfeição absoluta de seus músicos — chegou a parar shows no meio para recomeçar do zero.' },
-    ]
-  },
-  { id:'bigband', name:'Big Band Era', icon:'🎷', freq:'94.1', group:'essentials',
-    track:'Take the A Train', artist:'Duke Ellington Orchestra', year:'1941 · Victor Records',
-    album:'Take the A Train', albumEmoji:'🎷',
-    facts:[
-      { cat:'SOBRE A COMPOSIÇÃO', text:'"Take the A Train" foi escrita por Billy Strayhorn em 1939, após Duke Ellington lhe dar instruções de como chegar ao seu apartamento no Harlem de metrô. Tornou-se o tema oficial da orquestra.' },
-    ]
-  },
-  { id:'vocal', name:'Vocal Standards', icon:'🎙', freq:'95.5', group:'essentials',
-    track:"'Round Midnight", artist:'Billie Holiday', year:'1957 · Verve Records',
-    album:'Lady in Satin', albumEmoji:'🎙',
-    facts:[
-      { cat:'SOBRE A VOZ', text:'Billie Holiday desenvolveu um estilo único de atrasar levemente as notas em relação ao ritmo da banda — uma técnica que fazia cada frase soar como confidência sussurrada.' },
-    ]
-  },
-  { id:'midnight', name:'Midnight Blue', icon:'🌙', freq:'107.1', group:'mood',
-    track:'Blue in Green', artist:'Miles Davis & Bill Evans', year:'1959 · Columbia Records',
-    album:'Kind of Blue', albumEmoji:'🌙',
-    facts:[
-      { cat:'VIBE DA ESTAÇÃO', text:'Esta estação foi curada para as horas mais silenciosas da madrugada. Cada faixa foi selecionada pela sua capacidade de transformar solidão em contemplação.' },
-      { cat:'SOBRE A FAIXA', text:'"Blue in Green" é uma das composições mais debatidas do jazz — tanto Miles Davis quanto Bill Evans reivindicaram sua autoria. A disputa nunca foi resolvida em vida de ambos.' },
-    ]
-  },
-  { id:'bossa', name:'Bossa & Beyond', icon:'🌴', freq:'96.5', group:'special',
-    track:'Garota de Ipanema', artist:'João Gilberto & Stan Getz', year:'1963 · Verve Records · Rio de Janeiro',
-    album:'Getz/Gilberto', albumEmoji:'🌴',
-    facts:[
-      { cat:'ENCONTRO DE CULTURAS', text:'Getz/Gilberto foi gravado em apenas dois dias no Rio de Janeiro, em março de 1963. O álbum ganhou o Grammy de Álbum do Ano — o primeiro álbum brasileiro a receber esta honra.' },
-      { cat:'CURIOSIDADE', text:'A voz na gravação original de "Garota de Ipanema" é de Astrud Gilberto, esposa de João. Era sua primeira gravação profissional — ela foi incluída apenas porque falava inglês.' },
-    ]
-  },
-  { id:'bebop', name:'Bebop Revolution', icon:'⚡', freq:'99.1', group:'time',
-    track:"Ko-Ko", artist:'Charlie Parker', year:'1945 · Savoy Records · New York City',
-    album:'Ko-Ko', albumEmoji:'⚡',
-    facts:[
-      { cat:'A REVOLUÇÃO', text:'O bebop nasceu como reação ao jazz comercial e às big bands. Parker e Dizzy Gillespie criaram um vocabulário musical tão complexo que tornava impossível para músicos não preparados improvisar junto.' },
-      { cat:'SOBRE CHARLIE PARKER', text:'"Bird" Parker conseguia tocar com velocidade e precisão impossíveis para a maioria dos músicos. Dizem que em jam sessions, ele deliberadamente tocava em tempos absurdamente rápidos para "assustar" músicos medíocres.' },
-    ]
-  },
-  { id:'bluenote', name:'Blue Note Vault', icon:'💿', freq:'98.7', group:'special',
-    track:'Moanin', artist:"Art Blakey & The Jazz Messengers", year:'1958 · Blue Note Records',
-    album:"Moanin'", albumEmoji:'💿',
-    facts:[
-      { cat:'O SELO LENDÁRIO', text:'A Blue Note Records, fundada em 1939 por Alfred Lion e Francis Wolff, dois refugiados judeus alemães, tornou-se o mais importante selo de jazz da história — definindo a estética sonora e visual do hard bop.' },
-      { cat:'FOTOGRAFIA ICÔNICA', text:'Francis Wolff fotografava todas as sessões de gravação na Blue Note. Seu arquivo de mais de 20.000 fotografias criou a identidade visual que define o jazz até hoje.' },
-    ]
-  },
-  { id:'cinematic', name:'Cinematic Jazz', icon:'🎬', freq:'100.9', group:'special',
-    track:"Ascenseur pour l'échafaud", artist:"Miles Davis", year:'1958 · Fontana Records · Paris',
-    album:"Ascenseur pour l'échafaud", albumEmoji:'🎬',
-    facts:[
-      { cat:'A SESSÃO HISTÓRICA', text:'Miles Davis improvisou toda a trilha sonora do filme de Louis Malle em uma única noite, de 4 para 5 de dezembro de 1957, em Paris. Ele assistia às cenas projetadas na parede e tocava ao vivo.' },
-      { cat:'O JAZZ NOIR', text:'Esta gravação definiu o som do cinema noir europeu e influenciou gerações de compositores de trilhas sonoras — de John Barry a Lalo Schifrin.' },
-    ]
-  },
-  { id:'sampling', name:'Sampling Roots', icon:'🎧', freq:'102.5', group:'special',
-    track:'The Sidewinder', artist:'Lee Morgan', year:'1963 · Blue Note Records',
-    album:'The Sidewinder', albumEmoji:'🎧',
-    facts:[
-      { cat:'DO JAZZ AO HIP HOP', text:'"The Sidewinder" foi sampleado por A Tribe Called Quest, Pete Rock, Jay-Z e dezenas de outros produtores de hip hop. O groove funk desta faixa antecipou o breakbeat que definiria o rap.' },
-      { cat:'CONEXÃO', text:'Esta estação celebra o fato de que o jazz é o DNA do hip hop. Sem Coltrane, sem Wu-Tang. Sem Mingus, sem Kendrick. A linha é direta e profunda.' },
-    ]
-  },
+/* ---- DATA ---- */
+const ST = [
+  {id:'ivory',name:'Ivory Keys',icon:'🎹',freq:'88.1',group:'The Essentials',
+   track:'Waltz for Debby',artist:'Bill Evans Trio',year:'1961 · Riverside Records · NYC',album:'Waltz for Debby',ae:'🎹',
+   facts:[{c:'SOBRE A GRAVAÇÃO',t:'Gravado ao vivo no Village Vanguard em 25 de junho de 1961. O som dos clientes, talheres e conversas tornaram-se parte icônica do álbum.'},{c:'SOBRE O ARTISTA',t:'Bill Evans revolucionou a harmonia do jazz com acordes suspensos e impressionismo musical. Seu toque delicado influenciou quase todos os pianistas das décadas seguintes.'},{c:'CURIOSIDADE',t:'Scott LaFaro, o contrabaixista, morreu em acidente 10 dias após esta gravação. O álbum tornou-se seu epitáfio musical.'}]},
+  {id:'horn',name:'The Horn Section',icon:'🎺',freq:'90.3',group:'The Essentials',
+   track:'So What',artist:'Miles Davis',year:'1959 · Columbia Records · NYC',album:'Kind of Blue',ae:'🎺',
+   facts:[{c:'SOBRE A FAIXA',t:'"So What" abre Kind of Blue com apenas dois acordes modais — radicalidade que inaugurou o jazz modal em 1959.'},{c:'SOBRE O ARTISTA',t:'Miles gravou Kind of Blue em duas sessões. Nenhuma faixa foi ensaiada — ele dava esboços melódicos momentos antes de gravar.'}]},
+  {id:'strings',name:'Deep Strings',icon:'🎻',freq:'92.7',group:'The Essentials',
+   track:'Goodbye Pork Pie Hat',artist:'Charles Mingus',year:'1959 · Columbia Records',album:'Mingus Ah Um',ae:'🎻',
+   facts:[{c:'SOBRE A COMPOSIÇÃO',t:'Mingus compôs esta peça como homenagem a Lester Young, que faleceu no mesmo dia em que Mingus soube da notícia.'}]},
+  {id:'bigband',name:'Big Band Era',icon:'🎷',freq:'94.1',group:'The Essentials',
+   track:'Take the A Train',artist:'Duke Ellington Orchestra',year:'1941 · Victor Records',album:'Take the A Train',ae:'🎷',
+   facts:[{c:'SOBRE A COMPOSIÇÃO',t:'"Take the A Train" foi escrita por Billy Strayhorn após Duke Ellington lhe dar instruções de metrô para chegar ao Harlem. Tornou-se o tema oficial da orquestra.'}]},
+  {id:'vocal',name:'Vocal Standards',icon:'🎙',freq:'95.5',group:'The Essentials',
+   track:"'Round Midnight",artist:'Billie Holiday',year:'1957 · Verve Records',album:'Lady in Satin',ae:'🎙',
+   facts:[{c:'SOBRE A VOZ',t:'Billie Holiday atrasava levemente as notas em relação ao ritmo — cada frase soava como uma confidência sussurrada ao ouvinte.'}]},
+  {id:'roaring',name:'The Roaring 20s',icon:'🌀',freq:'97.3',group:'Time Travel',
+   track:'West End Blues',artist:'Louis Armstrong',year:'1928 · Okeh Records · Chicago',album:'West End Blues',ae:'🌀',
+   facts:[{c:'A ORIGEM',t:'"West End Blues" é considerada por muitos a gravação mais importante da história do jazz. O solo de abertura de Armstrong redefiniu o possível no instrumento.'}]},
+  {id:'bebop',name:'Bebop Revolution',icon:'⚡',freq:'99.1',group:'Time Travel',
+   track:'Ko-Ko',artist:'Charlie Parker',year:'1945 · Savoy Records · NYC',album:'Ko-Ko',ae:'⚡',
+   facts:[{c:'A REVOLUÇÃO',t:'O bebop nasceu como reação ao jazz comercial. Parker e Gillespie criaram um vocabulário tão complexo que tornava impossível improvisar junto sem preparo intenso.'}]},
+  {id:'kindofblue',name:'Kind of Blue',icon:'🌊',freq:'101.5',group:'Time Travel',
+   track:'Blue in Green',artist:'Miles Davis & Bill Evans',year:'1959 · Columbia Records',album:'Kind of Blue',ae:'🌊',
+   facts:[{c:'SOBRE A FAIXA',t:'"Blue in Green" é uma das composições mais debatidas do jazz — tanto Miles Davis quanto Bill Evans reivindicaram sua autoria. A disputa nunca foi resolvida em vida de ambos.'}]},
+  {id:'fusion',name:'Electric Fusion',icon:'🔌',freq:'103.7',group:'Time Travel',
+   track:'Chameleon',artist:'Herbie Hancock',year:'1973 · Columbia Records',album:'Head Hunters',ae:'🔌',
+   facts:[{c:'SOBRE O ÁLBUM',t:'Head Hunters foi o álbum de jazz mais vendido da história até os anos 90. Hancock misturou sintetizadores, funk e jazz de uma forma nunca antes ouvida.'}]},
+  {id:'modern',name:'Modern Scene',icon:'🔮',freq:'105.9',group:'Time Travel',
+   track:'Spihumonesty',artist:'Kamasi Washington',year:'2015 · Brainfeeder Records',album:'The Epic',ae:'🔮',
+   facts:[{c:'JAZZ HOJE',t:'Kamasi Washington ressuscitou o interesse pelo jazz ao vivo com "The Epic" — álbum triplo de 172 minutos que mistura jazz espiritual, funk e neosoul.'}]},
+  {id:'midnight',name:'Midnight Blue',icon:'🌙',freq:'107.1',group:'Mood & Atmosphere',
+   track:'Lonely Woman',artist:'Ornette Coleman',year:'1960 · Atlantic Records',album:'The Shape of Jazz',ae:'🌙',
+   facts:[{c:'VIBE DA ESTAÇÃO',t:'Curada para as horas mais silenciosas da madrugada. Cada faixa foi escolhida pela sua capacidade de transformar solidão em contemplação.'}]},
+  {id:'coffee',name:'The Coffeehouse',icon:'☕',freq:'108.3',group:'Mood & Atmosphere',
+   track:'Autumn Leaves',artist:'Bill Evans',year:'1959 · Riverside Records',album:'Portrait in Jazz',ae:'☕',
+   facts:[{c:'FOCO & FLUXO',t:'Estudos mostram que jazz suave de 60-80 BPM aumenta a concentração. Esta estação foi temperada para a zona perfeita de produtividade criativa.'}]},
+  {id:'spike',name:'Spike It Up',icon:'🔥',freq:'89.7',group:'Mood & Atmosphere',
+   track:"Moanin'",artist:'Art Blakey & The Jazz Messengers',year:'1958 · Blue Note Records',album:"Moanin'",ae:'🔥',
+   facts:[{c:'HARD BOP',t:'O hard bop foi a resposta do jazz negro ao cool jazz dos anos 50. Mais agressivo, ancorado no blues e no gospel — pura energia crua.'}]},
+  {id:'brunch',name:'Sunday Brunch',icon:'☀️',freq:'91.3',group:'Mood & Atmosphere',
+   track:'Take Five',artist:'Dave Brubeck Quartet',year:'1959 · Columbia Records',album:'Time Out',ae:'☀️',
+   facts:[{c:'DOMINGO PERFEITO',t:'"Take Five" foi o primeiro single de jazz a vender mais de 1 milhão de cópias. O groove em 5/4 parece impossível de dançar — mas é impossível de resistir.'}]},
+  {id:'cellar',name:'Underground Cellar',icon:'🕳',freq:'93.5',group:'Mood & Atmosphere',
+   track:'Ascension',artist:'John Coltrane',year:'1965 · Impulse! Records',album:'Ascension',ae:'🕳',
+   facts:[{c:'AVANT-GARDE',t:'"Ascension" é uma obra de 40 minutos de improvisação livre coletiva. Coltrane reuniu 11 músicos em estúdio e simplesmente... começaram a tocar.'}]},
+  {id:'bossa',name:'Bossa & Beyond',icon:'🌴',freq:'96.5',group:'Special Curations',
+   track:'Garota de Ipanema',artist:'João Gilberto & Stan Getz',year:'1963 · Verve Records · Rio de Janeiro',album:'Getz/Gilberto',ae:'🌴',
+   facts:[{c:'ENCONTRO DE CULTURAS',t:'Getz/Gilberto ganhou o Grammy de Álbum do Ano — o primeiro álbum brasileiro a receber esta honra.'},{c:'CURIOSIDADE',t:'A voz em "Garota de Ipanema" é de Astrud Gilberto. Era sua primeira gravação profissional — incluída apenas porque falava inglês.'}]},
+  {id:'bluenote',name:'Blue Note Vault',icon:'💿',freq:'98.7',group:'Special Curations',
+   track:'The Sidewinder',artist:'Lee Morgan',year:'1963 · Blue Note Records',album:'The Sidewinder',ae:'💿',
+   facts:[{c:'O SELO LENDÁRIO',t:'A Blue Note Records foi fundada em 1939 por dois refugiados judeus alemães. Tornou-se o mais importante selo de jazz da história, definindo o visual e o som do hard bop.'}]},
+  {id:'cinematic',name:'Cinematic Jazz',icon:'🎬',freq:'100.9',group:'Special Curations',
+   track:"Ascenseur pour l'échafaud",artist:'Miles Davis',year:'1958 · Fontana Records · Paris',album:"Ascenseur pour l'échafaud",ae:'🎬',
+   facts:[{c:'A SESSÃO HISTÓRICA',t:'Miles improvisou toda a trilha sonora do filme de Louis Malle em uma única noite de dezembro de 1957 em Paris, assistindo às cenas projetadas na parede.'}]},
+  {id:'sampling',name:'Sampling Roots',icon:'🎧',freq:'102.5',group:'Special Curations',
+   track:'The Sidewinder',artist:'Lee Morgan',year:'1963 · Blue Note Records',album:'Sampling Roots',ae:'🎧',
+   facts:[{c:'DO JAZZ AO HIP HOP',t:'Sem Coltrane, sem Wu-Tang. Sem Mingus, sem Kendrick. Esta estação celebra o jazz como DNA do hip hop — a linha é direta e profunda.'}]},
 ];
 
-let currentStationIndex = 0;
-let isPlaying = false;
-let audioCtx = null;
-let crackleNode = null;
-let crackleGain = null;
-let masterGain = null;
-let progressInterval = null;
-let progressSeconds = 222; // 3:42
-let totalSeconds = 418; // 6:58
-let vuInterval = null;
-let listenersInterval = null;
-let visAnimId = null;
+/* ---- STATE ---- */
+let CUR=0, playing=false, ctx=null, crkGain=null, mGain=null;
+let progIv=null, vuIv=null, visId=null, progS=222, totalS=418, uiMode='desktop';
 
-// ===== AUDIO SETUP =====
-function initAudio() {
-  if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0.8;
-  masterGain.connect(audioCtx.destination);
-
-  // Crackle: brown noise
-  crackleGain = audioCtx.createGain();
-  crackleGain.gain.value = 0;
-  crackleGain.connect(masterGain);
-
-  startCrackle();
+/* ---- MODE ---- */
+function detectMode(){ return (/Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)||window.innerWidth<768)?'mobile':'desktop'; }
+function applyMode(m){
+  uiMode=m;
+  document.body.classList.toggle('mode-mobile',m==='mobile');
+  document.getElementById('tg-icon').textContent=m==='mobile'?'🖥️':'📱';
+  document.getElementById('ui-toggle-label').textContent=m==='mobile'?'Desktop':'Mobile';
 }
+function toggleMode(){ applyMode(uiMode==='desktop'?'mobile':'desktop'); }
 
-function startCrackle() {
-  const bufferSize = audioCtx.sampleRate * 3;
-  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-
-  // Generate pink/brown noise with pops
-  let lastOut = 0;
-  for (let i = 0; i < bufferSize; i++) {
-    const white = Math.random() * 2 - 1;
-    // Brown noise
-    lastOut = (lastOut + (0.02 * white)) / 1.02;
-    data[i] = lastOut * 3.5;
-    // Random crackle pops
-    if (Math.random() < 0.0003) {
-      data[i] += (Math.random() > 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.7);
-      // Small pop tail
-      for (let j = 1; j < 8 && i+j < bufferSize; j++) {
-        data[i+j] += data[i] * Math.pow(0.5, j);
-      }
-    }
+/* ---- AUDIO ---- */
+function initAudio(){
+  if(ctx)return;
+  ctx=new(window.AudioContext||window.webkitAudioContext)();
+  mGain=ctx.createGain(); mGain.gain.value=0.8; mGain.connect(ctx.destination);
+  crkGain=ctx.createGain(); crkGain.gain.value=0; crkGain.connect(mGain);
+  const sr=ctx.sampleRate, buf=ctx.createBuffer(1,sr*3,sr), d=buf.getChannelData(0);
+  let last=0;
+  for(let i=0;i<d.length;i++){
+    const w=Math.random()*2-1; last=(last+0.02*w)/1.02; d[i]=last*3.5;
+    if(Math.random()<0.0003){const v=(Math.random()>.5?1:-1)*(0.3+Math.random()*0.7);d[i]+=v;for(let j=1;j<8&&i+j<d.length;j++)d[i+j]+=v*Math.pow(.5,j);}
   }
-
-  crackleNode = audioCtx.createBufferSource();
-  crackleNode.buffer = buffer;
-  crackleNode.loop = true;
-
-  // Low-pass filter for warmth
-  const lpf = audioCtx.createBiquadFilter();
-  lpf.type = 'lowpass';
-  lpf.frequency.value = 4000;
-
-  crackleNode.connect(lpf);
-  lpf.connect(crackleGain);
-  crackleNode.start();
+  const s=ctx.createBufferSource(); s.buffer=buf; s.loop=true;
+  const lpf=ctx.createBiquadFilter(); lpf.type='lowpass'; lpf.frequency.value=4000;
+  s.connect(lpf); lpf.connect(crkGain); s.start();
 }
-
-function setCrackle(val) {
-  document.getElementById('crackleDisplay').textContent = val;
-  if (!audioCtx) return;
-  crackleGain.gain.setTargetAtTime(val / 100 * 0.12, audioCtx.currentTime, 0.1);
+function needleDrop(){
+  if(!ctx)return;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(mGain);
+  o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(200,ctx.currentTime+.15);
+  g.gain.setValueAtTime(.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.3);
+  o.start();o.stop(ctx.currentTime+.3);
 }
-
-function setVolume(val) {
-  document.getElementById('volDisplay').textContent = val;
-  if (!audioCtx) return;
-  masterGain.gain.setTargetAtTime(val / 100, audioCtx.currentTime, 0.1);
+function staticBurst(){
+  if(!ctx)return;
+  const sr=ctx.sampleRate,buf=ctx.createBuffer(1,sr*1.5,sr),d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  const s=ctx.createBufferSource();s.buffer=buf;
+  const g=ctx.createGain(),bpf=ctx.createBiquadFilter();bpf.type='bandpass';bpf.frequency.value=3000;
+  s.connect(bpf);bpf.connect(g);g.connect(mGain);
+  g.gain.setValueAtTime(.15,ctx.currentTime);g.gain.linearRampToValueAtTime(0,ctx.currentTime+1.2);s.start();
 }
+function setVol(v,lbl){document.getElementById(lbl).textContent=v;if(!ctx)return;mGain.gain.setTargetAtTime(v/100,ctx.currentTime,.1);}
+function setCrk(v,lbl){document.getElementById(lbl).textContent=v;if(!ctx)return;crkGain.gain.setTargetAtTime(v/100*.12,ctx.currentTime,.1);}
 
-// Needle drop sound
-function playNeedleDrop() {
-  if (!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  osc.connect(g); g.connect(masterGain);
-  osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-  osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
-  g.gain.setValueAtTime(0.3, audioCtx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-  osc.start(audioCtx.currentTime);
-  osc.stop(audioCtx.currentTime + 0.3);
-}
-
-// Static noise burst on station change
-function playStaticBurst() {
-  if (!audioCtx) return;
-  const bufferSize = audioCtx.sampleRate * 1.5;
-  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    data[i] = Math.random() * 2 - 1;
-  }
-  const node = audioCtx.createBufferSource();
-  node.buffer = buffer;
-  const g = audioCtx.createGain();
-  const hpf = audioCtx.createBiquadFilter();
-  hpf.type = 'bandpass';
-  hpf.frequency.value = 3000;
-  node.connect(hpf); hpf.connect(g); g.connect(masterGain);
-  g.gain.setValueAtTime(0.15, audioCtx.currentTime);
-  g.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.2);
-  node.start();
-}
-
-// ===== PLAY/PAUSE =====
-function togglePlay() {
-  if (!audioCtx) initAudio();
-  isPlaying = !isPlaying;
-
-  const vinyl = document.getElementById('vinylRecord');
-  const playBtn = document.getElementById('playBtn');
-
-  if (isPlaying) {
-    vinyl.classList.add('playing');
-    playBtn.textContent = '⏸';
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    startProgress();
-    startVU();
-    startVisualizer();
-    playNeedleDrop();
-    setCrackle(document.getElementById('crackleSlider').value);
-  } else {
-    vinyl.classList.remove('playing');
-    playBtn.textContent = '▶';
-    clearInterval(progressInterval);
-    clearInterval(vuInterval);
-    cancelAnimationFrame(visAnimId);
-    if (audioCtx) crackleGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.3);
+/* ---- PLAY ---- */
+function togglePlay(){
+  if(!ctx)initAudio();
+  playing=!playing;
+  ['d-vinyl','m-vinyl'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('playing',playing);});
+  document.getElementById('d-play').textContent=playing?'⏸':'▶';
+  document.getElementById('m-play').textContent=playing?'⏸':'▶';
+  if(playing){
+    if(ctx.state==='suspended')ctx.resume();
+    startProg();startVU();startVis();needleDrop();
+    setCrk(document.getElementById('d-crk').value,'d-cv2');
+  }else{
+    clearInterval(progIv);clearInterval(vuIv);cancelAnimationFrame(visId);
+    if(ctx)crkGain.gain.setTargetAtTime(0,ctx.currentTime,.3);
   }
 }
 
-// ===== PROGRESS =====
-function startProgress() {
-  clearInterval(progressInterval);
-  progressInterval = setInterval(() => {
-    progressSeconds++;
-    if (progressSeconds >= totalSeconds) progressSeconds = 0;
-    const pct = (progressSeconds / totalSeconds) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('timeElapsed').textContent = formatTime(progressSeconds);
-  }, 1000);
+/* ---- PROGRESS ---- */
+function startProg(){
+  clearInterval(progIv);
+  progIv=setInterval(()=>{
+    progS++;if(progS>=totalS)progS=0;
+    const p=(progS/totalS)*100;
+    ['d-prog','m-prog'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.width=p+'%';});
+    const t=fmt(progS);
+    document.getElementById('d-el').textContent=t;document.getElementById('m-el').textContent=t;
+  },1000);
 }
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 
-function formatTime(s) {
-  return Math.floor(s/60) + ':' + String(s%60).padStart(2,'0');
+/* ---- VU ---- */
+function startVU(){
+  clearInterval(vuIv); let ph=0;
+  vuIv=setInterval(()=>{
+    ph+=.15;
+    const L=.5+.4*Math.sin(ph)+.1*Math.random(), R=.5+.4*Math.sin(ph+.8)+.1*Math.random();
+    const nl=document.getElementById('d-nl'),nr=document.getElementById('d-nr');
+    if(nl)nl.style.transform=`rotate(${-30+L*60}deg) translateX(-50%)`;
+    if(nr)nr.style.transform=`rotate(${-30+R*60}deg) translateX(-50%)`;
+    updBars('d-vul',L);updBars('d-vur',R);updMVU(L,R);
+  },80);
 }
-
-// ===== VU METERS =====
-function startVU() {
-  clearInterval(vuInterval);
-  let phase = 0;
-  vuInterval = setInterval(() => {
-    phase += 0.15;
-    const baseL = 0.5 + 0.4 * Math.sin(phase) + 0.1 * Math.random();
-    const baseR = 0.5 + 0.4 * Math.sin(phase + 0.8) + 0.1 * Math.random();
-
-    // Needle rotation: -30 to +30 deg
-    const rotL = -30 + baseL * 60;
-    const rotR = -30 + baseR * 60;
-    document.getElementById('needleL').style.transform = `rotate(${rotL}deg) translateX(-50%)`;
-    document.getElementById('needleR').style.transform = `rotate(${rotR}deg) translateX(-50%)`;
-
-    // Bar VU
-    updateBars('vuBarsL', baseL);
-    updateBars('vuBarsR', baseR);
-  }, 80);
+function updBars(id,lv){
+  const bs=document.querySelectorAll(`#${id} .vu-bar`),n=bs.length,a=Math.floor(lv*n);
+  bs.forEach((b,i)=>{b.style.height=(i<a?(8+Math.random()*4):3)+'px';});
 }
-
-function updateBars(id, level) {
-  const container = document.getElementById(id);
-  const bars = container.querySelectorAll('.vu-bar');
-  const total = bars.length;
-  const active = Math.floor(level * total);
-  bars.forEach((bar, i) => {
-    if (i < active) {
-      bar.style.height = (8 + Math.random() * 4) + 'px';
-    } else {
-      bar.style.height = '3px';
-    }
+function updMVU(L,R){
+  const bs=document.querySelectorAll('#m-vu .m-vu-b'),h=Math.floor(bs.length/2);
+  bs.forEach((b,i)=>{
+    const lv=i<h?L:R, pos=i<h?i:i-h, a=Math.floor(lv*h);
+    b.style.height=(pos<a?(6+Math.random()*11):3)+'px';
+    b.style.opacity=pos<a?'1':'0.2';
   });
 }
 
-// ===== VISUALIZER =====
-function startVisualizer() {
-  const canvas = document.getElementById('visualizer');
-  const ctx = canvas.getContext('2d');
-  let t = 0;
-
-  function draw() {
-    if (!isPlaying) return;
-    visAnimId = requestAnimationFrame(draw);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const w = canvas.width, h = canvas.height;
-    ctx.strokeStyle = 'rgba(232,148,26,0.6)';
-    ctx.lineWidth = 1.5;
-    ctx.shadowColor = 'rgba(232,148,26,0.4)';
-    ctx.shadowBlur = 4;
-    ctx.beginPath();
-
-    for (let x = 0; x < w; x++) {
-      const freq = x / w;
-      const y = h/2 +
-        Math.sin(t * 2.1 + freq * 18) * (h * 0.18) +
-        Math.sin(t * 3.7 + freq * 9) * (h * 0.1) +
-        Math.sin(t * 1.3 + freq * 30) * (h * 0.06) +
-        (Math.random() - 0.5) * 3;
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    t += 0.04;
+/* ---- VISUALIZER ---- */
+function startVis(){
+  let t=0;
+  function draw(){
+    if(!playing)return;
+    visId=requestAnimationFrame(draw);
+    drawCv('d-cv',t,50);drawCv('m-cv',t,34);
+    t+=.04;
   }
   draw();
 }
-
-// ===== STATION SWITCH =====
-function switchStation(el) {
-  const stationId = el.dataset.station;
-  const idx = stations.findIndex(s => s.id === stationId);
-  if (idx === currentStationIndex) return;
-
-  if (!audioCtx) initAudio();
-  else if (audioCtx.state === 'suspended') audioCtx.resume();
-
-  // Show tuning overlay
-  const overlay = document.getElementById('tuningOverlay');
-  document.getElementById('tuningStation').textContent = el.querySelector('.station-name').textContent;
-  overlay.classList.add('active');
-
-  // Static burst
-  playStaticBurst();
-
-  // Stop vinyl
-  const vinyl = document.getElementById('vinylRecord');
-  vinyl.classList.remove('playing');
-
-  setTimeout(() => {
-    currentStationIndex = idx;
-    updatePlayerUI(stations[idx]);
-    overlay.classList.remove('active');
-
-    if (isPlaying) {
-      vinyl.classList.add('playing');
-      playNeedleDrop();
-    }
-
-    // Sync dial
-    scrollDialTo(idx);
-  }, 1600);
-
-  // Update station list
-  document.querySelectorAll('.station-item').forEach(s => s.classList.remove('active'));
-  el.classList.add('active');
+function drawCv(id,t,h){
+  const cv=document.getElementById(id);if(!cv)return;
+  const c=cv.getContext('2d'),w=cv.width;
+  c.clearRect(0,0,w,h);c.strokeStyle='rgba(59,164,232,0.6)';c.lineWidth=1.5;c.shadowColor='rgba(59,164,232,0.4)';c.shadowBlur=4;
+  c.beginPath();
+  for(let x=0;x<w;x++){const f=x/w,y=h/2+Math.sin(t*2.1+f*18)*(h*.25)+Math.sin(t*3.7+f*9)*(h*.12)+Math.sin(t*1.3+f*30)*(h*.07)+(Math.random()-.5)*2;x===0?c.moveTo(x,y):c.lineTo(x,y);}
+  c.stroke();
 }
 
-function updatePlayerUI(s) {
-  document.getElementById('trackTitle').textContent = s.track;
-  document.getElementById('trackArtist').textContent = s.artist;
-  document.getElementById('trackYear').textContent = s.year;
-  document.getElementById('currentStationDisplay').textContent = `📻 ${s.name} — ${s.freq} FM`;
-  document.getElementById('albumName').textContent = s.album;
-  document.getElementById('albumThumb').textContent = s.albumEmoji;
-  document.getElementById('albumMeta').innerHTML = `${s.artist}<br>${s.year}`;
-
-  // Reset progress
-  progressSeconds = Math.floor(Math.random() * 180);
-  totalSeconds = 240 + Math.floor(Math.random() * 240);
-  document.getElementById('timeDuration').textContent = formatTime(totalSeconds);
-  document.getElementById('timeElapsed').textContent = formatTime(progressSeconds);
-
-  // Update dial freq display
-  document.getElementById('dialFreqDisplay').textContent = s.freq + ' FM';
-
-  // Render facts
-  renderFacts(s.facts);
-
-  // Update listeners
-  updateListeners(s);
+/* ---- SWITCH STATION ---- */
+function switchStation(idx){
+  if(idx===CUR){closeSheet();return;}
+  if(!ctx)initAudio();else if(ctx.state==='suspended')ctx.resume();
+  const s=ST[idx];
+  document.getElementById('d-tuning').classList.add('active');document.getElementById('m-tuning').classList.add('active');
+  document.getElementById('d-tn').textContent=s.name;document.getElementById('m-tn').textContent=s.name;
+  staticBurst();
+  ['d-vinyl','m-vinyl'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.remove('playing');});
+  setTimeout(()=>{
+    CUR=idx;updateUI(s);
+    document.getElementById('d-tuning').classList.remove('active');document.getElementById('m-tuning').classList.remove('active');
+    if(playing){['d-vinyl','m-vinyl'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('playing');});needleDrop();}
+    scrollDial(idx);closeSheet();
+  },1600);
+  document.querySelectorAll('.station-item').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  document.querySelectorAll('.m-station-row').forEach((el,i)=>el.classList.toggle('active',i===idx));
 }
 
-function renderFacts(facts) {
-  const container = document.getElementById('factsContainer');
-  container.innerHTML = '';
-  facts.forEach((f, i) => {
-    const card = document.createElement('div');
-    card.className = 'liner-card';
-    card.style.animationDelay = (i * 0.15) + 's';
-    card.innerHTML = `
-      <div class="tape-strip"></div>
-      <div class="fact-category">${f.cat}</div>
-      <div class="fact-text typewriter" id="fact-${i}"></div>
-      <div class="fact-source">— DAJZ.CLUB Archive</div>
-    `;
-    container.appendChild(card);
+function updateUI(s){
+  const fi=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v;};
+  fi('d-title',s.track);fi('m-title',s.track);fi('d-artist',s.artist);fi('m-artist',s.artist);fi('d-year',s.year);fi('m-year',s.year);
+  const tag=`📻 ${s.name} — ${s.freq} FM`;fi('d-stag',tag);fi('m-stag',tag);fi('m-sc',s.name);fi('d-df',s.freq+' FM');
+  fi('d-ath',s.ae);fi('m-ath',s.ae);fi('d-an',s.album);fi('m-an',s.album);
+  const am=`${s.artist}<br>${s.year}`;
+  const da=document.getElementById('d-am');if(da)da.innerHTML=am;const ma=document.getElementById('m-am');if(ma)ma.innerHTML=am;
+  const lc=80+ST.indexOf(s)*27+Math.floor(Math.random()*50);
+  fi('d-lc',lc);fi('m-lc',lc);fi('d-ll',`Ouvindo — ${s.name}`);fi('m-ll',`Ouvindo — ${s.name}`);
+  progS=Math.floor(Math.random()*180);totalS=240+Math.floor(Math.random()*240);
+  const dur=fmt(totalS);fi('d-dur',dur);fi('m-dur',dur);fi('d-el',fmt(progS));fi('m-el',fmt(progS));
+  renderFacts('d-facts',s.facts);renderFacts('m-facts',s.facts);
+}
 
-    // Typewriter effect
-    typeWriter(`fact-${i}`, f.text, i * 600);
+function renderFacts(cid,facts){
+  const c=document.getElementById(cid);if(!c)return;c.innerHTML='';
+  if(!facts||facts.length===0)return;
+  const card=document.createElement('div');card.className='liner-card';
+  let inner='<div class="tape-strip"></div>';
+  facts.forEach((f,i)=>{
+    if(i>0)inner+='<div style="border-top:1px solid rgba(59,164,232,0.1);margin:12px 0 10px"></div>';
+    inner+=`<div class="fact-category">${f.c}</div><div class="fact-text typewriter" id="${cid}-${i}"></div>`;
+  });
+  inner+='<div class="fact-source">— DAJZ.CLUB Archive</div>';
+  card.innerHTML=inner;c.appendChild(card);
+  facts.forEach((f,i)=>typeW(`${cid}-${i}`,f.t,i*700));
+}
+function typeW(id,text,delay){
+  setTimeout(()=>{const el=document.getElementById(id);if(!el)return;let i=0;const iv=setInterval(()=>{if(i<text.length){el.textContent+=text[i];i++;}else{el.classList.remove('typewriter');clearInterval(iv);}},16);},delay);
+}
+
+/* ---- CLOCK ---- */
+function tickClock(){
+  const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
+  const dc=document.getElementById('d-clock');if(dc)dc.textContent=`${h}:${m}:${s}`;
+  const mc=document.getElementById('m-clock');if(mc)mc.textContent=`${h}:${m}`;
+}
+setInterval(tickClock,1000);tickClock();
+
+/* ---- BUILD LISTS ---- */
+function buildDesktop(){
+  const p=document.getElementById('d-stations');let lg='';
+  ST.forEach((s,i)=>{
+    if(s.group!==lg){lg=s.group;const g=document.createElement('div');g.className='station-group';const gl=document.createElement('div');gl.className='group-label';gl.textContent='◈ '+s.group;g.appendChild(gl);p.appendChild(g);}
+    const el=document.createElement('div');el.className='station-item'+(i===0?' active':'');
+    el.innerHTML=`<div class="station-icon">${s.icon}</div><div class="station-info"><div class="station-name">${s.name}</div><div class="station-desc">${s.facts[0].t.substring(0,40)}...</div></div><div class="freq-badge">${s.freq}</div>`;
+    el.onclick=()=>switchStation(i);p.lastElementChild.appendChild(el);
+  });
+}
+function buildSheet(){
+  const b=document.getElementById('m-sb');let lg='';
+  ST.forEach((s,i)=>{
+    if(s.group!==lg){lg=s.group;const gl=document.createElement('div');gl.className='m-group-label';gl.textContent='◈ '+s.group;b.appendChild(gl);}
+    const r=document.createElement('div');r.className='m-station-row'+(i===0?' active':'');
+    r.innerHTML=`<div class="m-station-icon">${s.icon}</div><div class="m-station-text"><div class="m-station-name">${s.name}</div><div class="m-station-sub">${s.facts[0].c.toLowerCase()}</div></div><div class="m-station-freq">${s.freq} FM</div>`;
+    r.onclick=()=>switchStation(i);b.appendChild(r);
   });
 }
 
-function typeWriter(id, text, delay) {
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    let i = 0;
-    const interval = setInterval(() => {
-      if (i < text.length) {
-        el.textContent += text[i];
-        i++;
-      } else {
-        el.classList.remove('typewriter');
-        clearInterval(interval);
-      }
-    }, 18);
-  }, delay);
+/* ---- DIAL ---- */
+function buildDial(){
+  const t=document.getElementById('d-dial');
+  ST.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='dial-station'+(i===0?' active':'');
+    d.innerHTML=`<div class="dial-sname">${s.icon} ${s.name}</div><div class="dial-sfreq">${s.freq} FM</div>`;
+    d.onclick=()=>switchStation(i);t.appendChild(d);
+  });
+}
+function scrollDial(idx){
+  const t=document.getElementById('d-dial');if(!t)return;
+  t.style.transform=`translateX(${-(idx*120)+(t.parentElement.offsetWidth/2)-60}px)`;
+  document.querySelectorAll('.dial-station').forEach((el,i)=>el.classList.toggle('active',i===idx));
+  const df=document.getElementById('d-df');if(df)df.textContent=ST[idx].freq+' FM';
+}
+function dNext(){if(CUR<ST.length-1)switchStation(CUR+1);}
+function dPrev(){if(CUR>0)switchStation(CUR-1);}
+
+let dDrag=false,dSX=0,dST=0;
+function initDrag(){
+  const t=document.getElementById('d-dial');if(!t)return;
+  t.addEventListener('mousedown',e=>{dDrag=true;dSX=e.clientX;const m=t.style.transform.match(/-?\d+/);dST=m?parseInt(m[0]):0;e.preventDefault();});
+  document.addEventListener('mousemove',e=>{if(!dDrag)return;t.style.transform=`translateX(${dST+e.clientX-dSX}px)`;});
+  document.addEventListener('mouseup',e=>{if(!dDrag)return;dDrag=false;const m=t.style.transform.match(/-?\d+/),x=m?parseInt(m[0]):0;const idx=Math.max(0,Math.min(ST.length-1,Math.round((t.parentElement.offsetWidth/2-60-x)/120)));switchStation(idx);});
 }
 
-function updateListeners(s) {
-  const base = 80 + stations.indexOf(s) * 27 + Math.floor(Math.random() * 50);
-  document.getElementById('listenersCount').textContent = base;
-  document.querySelector('.listeners-text').textContent = `Ouvindo agora — ${s.name}`;
+/* ---- SHEET ---- */
+let shOpen=false;
+function toggleSheet(){shOpen?closeSheet():openSheet();}
+function openSheet(){shOpen=true;document.getElementById('m-sheet').classList.add('open');document.getElementById('m-bd').classList.add('active');document.getElementById('m-sa').textContent='▼';}
+function closeSheet(){shOpen=false;document.getElementById('m-sheet').classList.remove('open');document.getElementById('m-bd').classList.remove('active');document.getElementById('m-sa').textContent='▲';}
+function openLiner(){document.getElementById('m-liner').classList.add('open');}
+function closeLiner(){document.getElementById('m-liner').classList.remove('open');}
+
+/* Swipe gesture */
+let tsY=0;
+const mui=document.getElementById('mobile-ui');
+mui.addEventListener('touchstart',e=>{tsY=e.touches[0].clientY;},{passive:true});
+mui.addEventListener('touchend',e=>{const dy=tsY-e.changedTouches[0].clientY;if(dy>60&&!shOpen)openSheet();if(dy<-60&&shOpen)closeSheet();},{passive:true});
+
+/* ---- VU BAR INIT ---- */
+function initVU(){
+  ['d-vul','d-vur'].forEach(id=>{
+    const c=document.getElementById(id);if(!c)return;
+    for(let i=0;i<12;i++){const b=document.createElement('div');b.className='vu-bar '+(i<7?'green':i<10?'amber':'red');b.style.height='3px';c.appendChild(b);}
+  });
+  const mr=document.getElementById('m-vu');if(!mr)return;
+  for(let i=0;i<28;i++){const b=document.createElement('div');b.className='m-vu-b '+(i%14<8?'g':i%14<11?'a':'r');b.style.cssText='height:3px;width:4px;border-radius:1px';mr.appendChild(b);}
 }
 
-// ===== CLOCK =====
-function updateClock() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const s = String(now.getSeconds()).padStart(2,'0');
-  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
-}
-setInterval(updateClock, 1000);
-updateClock();
-
-// ===== DIAL =====
-function buildDial() {
-  const track = document.getElementById('dialTrack');
-  track.innerHTML = '';
-  stations.forEach((s, i) => {
-    const div = document.createElement('div');
-    div.className = 'dial-station' + (i === 0 ? ' active' : '');
-    div.dataset.index = i;
-    div.onclick = () => {
-      const el = document.querySelectorAll('.station-item')[i];
-      if (el) switchStation(el);
-    };
-    div.innerHTML = `<div class="dial-station-name">${s.icon} ${s.name}</div><div class="dial-freq">${s.freq} FM</div>`;
-    track.appendChild(div);
+/* ---- TUNING WAVES ---- */
+function initWaves(){
+  ['d-tw','m-tw'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;el.innerHTML='';
+    for(let i=0;i<20;i++){const s=document.createElement('span');s.style.setProperty('--i',i);el.appendChild(s);}
   });
 }
 
-function scrollDialTo(idx) {
-  const track = document.getElementById('dialTrack');
-  const stationWidth = 120;
-  const offset = -(idx * stationWidth) + (track.parentElement.offsetWidth / 2) - 60;
-  track.style.transform = `translateX(${offset}px)`;
+/* ---- LISTENERS FLUX ---- */
+setInterval(()=>{
+  ['d-lc','m-lc'].forEach(id=>{const el=document.getElementById(id);if(!el)return;el.textContent=Math.max(10,parseInt(el.textContent||'100')+(Math.floor(Math.random()*7)-3));});
+},4000);
 
-  document.querySelectorAll('.dial-station').forEach((el, i) => {
-    el.classList.toggle('active', i === idx);
-  });
-  document.getElementById('dialFreqDisplay').textContent = stations[idx].freq + ' FM';
-}
-
-function dialNext() {
-  if (currentStationIndex < stations.length - 1) {
-    const nextEl = document.querySelectorAll('.station-item')[currentStationIndex + 1];
-    if (nextEl) switchStation(nextEl);
-  }
-}
-
-function dialPrev() {
-  if (currentStationIndex > 0) {
-    const prevEl = document.querySelectorAll('.station-item')[currentStationIndex - 1];
-    if (prevEl) switchStation(prevEl);
-  }
-}
-
-// ===== VU BARS INIT =====
-function initVUBars() {
-  ['vuBarsL', 'vuBarsR'].forEach(id => {
-    const container = document.getElementById(id);
-    for (let i = 0; i < 12; i++) {
-      const bar = document.createElement('div');
-      bar.className = 'vu-bar ' + (i < 7 ? 'green' : i < 10 ? 'amber' : 'red');
-      bar.style.height = '3px';
-      container.appendChild(bar);
-    }
-  });
-}
-
-// ===== TUNING WAVE INIT =====
-function initTuningWave() {
-  const wave = document.getElementById('tuningWave');
-  for (let i = 0; i < 20; i++) {
-    const s = document.createElement('span');
-    s.style.setProperty('--i', i);
-    wave.appendChild(s);
-  }
-}
-
-// ===== LISTENERS FLUCTUATION =====
-function startListenersFluctuation() {
-  listenersInterval = setInterval(() => {
-    const el = document.getElementById('listenersCount');
-    const current = parseInt(el.textContent) || 100;
-    const delta = Math.floor(Math.random() * 7) - 3;
-    el.textContent = Math.max(10, current + delta);
-  }, 4000);
-}
-
-// ===== INIT =====
-buildDial();
-initVUBars();
-initTuningWave();
-scrollDialTo(0);
-renderFacts(stations[0].facts);
-updateListeners(stations[0]);
-startListenersFluctuation();
-
-// Auto-advance progress bar (visual demo even before clicking play)
-setTimeout(() => {
-  startProgress();
-}, 500);
-
-// Listeners: fluctuate
-let tickCount = 0;
-
-// Drag dial
-let isDragging = false;
-let dragStartX = 0;
-let dragStartTransform = 0;
-
-const dialTrack = document.getElementById('dialTrack');
-
-dialTrack.addEventListener('mousedown', e => {
-  isDragging = true;
-  dragStartX = e.clientX;
-  const m = dialTrack.style.transform.match(/-?\d+/);
-  dragStartTransform = m ? parseInt(m[0]) : 0;
-  e.preventDefault();
-});
-
-document.addEventListener('mousemove', e => {
-  if (!isDragging) return;
-  const dx = e.clientX - dragStartX;
-  const newX = dragStartTransform + dx;
-  dialTrack.style.transform = `translateX(${newX}px)`;
-});
-
-document.addEventListener('mouseup', e => {
-  if (!isDragging) return;
-  isDragging = false;
-  // Snap to nearest
-  const m = dialTrack.style.transform.match(/-?\d+/);
-  const currentX = m ? parseInt(m[0]) : 0;
-  const center = dialTrack.parentElement.offsetWidth / 2 - 60;
-  const idx = Math.round((center - currentX) / 120);
-  const clampedIdx = Math.max(0, Math.min(stations.length - 1, idx));
-  const targetEl = document.querySelectorAll('.station-item')[clampedIdx];
-  if (targetEl && clampedIdx !== currentStationIndex) {
-    switchStation(targetEl);
-  } else {
-    scrollDialTo(currentStationIndex);
-  }
-});
+/* ---- INIT ---- */
+applyMode(detectMode());
+buildDesktop();buildSheet();buildDial();initVU();initWaves();
+scrollDial(0);renderFacts('d-facts',ST[0].facts);renderFacts('m-facts',ST[0].facts);
+initDrag();setTimeout(()=>startProg(),600);
 </script>
 </body>
 </html>
